@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prestasjoner &ndash; Tyske Preposisjoner</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="page">
+
+  <header class="page-header">
+    <div class="page-header-eyebrow">
+      <span class="flag-bar"><span class="f1"></span><span class="f2"></span><span class="f3"></span></span>
+      <span>Samling</span>
+    </div>
+    <h1>Prestasjoner</h1>
+    <p>L&aring;s opp alle 27 prestasjoner ved &aring; spille og &oslash;ve.</p>
+  </header>
+
+  <!-- Progress bar -->
+  <div class="ach-progress-wrap">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.5rem;">
+      <span id="ach-count-label" style="font-weight:700;font-size:1rem;">0 / 27 låst opp</span>
+      <span id="ach-pct-label"   style="font-size:.8rem;color:var(--text3);">0%</span>
+    </div>
+    <div class="bar-track" style="height:8px;">
+      <div class="bar-fill" id="ach-bar" style="width:0%;background:var(--akk);transition:width .6s ease;"></div>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="ach-grid" id="ach-grid"></div>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/achievements.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  Settings.load();
+  Achievements.checkNightOwl();
+
+  const all      = Achievements.getAll();
+  const unlocked = Achievements.getUnlocked();
+  const grid     = document.getElementById("ach-grid");
+
+  const count = Object.keys(unlocked).length;
+  const pct   = Math.round(count / all.length * 100);
+
+  document.getElementById("ach-count-label").textContent = count + " / " + all.length + " låst opp";
+  document.getElementById("ach-pct-label").textContent   = pct + "%";
+  setTimeout(() => {
+    document.getElementById("ach-bar").style.width = pct + "%";
+  }, 100);
+
+  all.forEach(ach => {
+    const isUnlocked = !!unlocked[ach.id];
+    const date = isUnlocked ? new Date(unlocked[ach.id]).toLocaleDateString("nb-NO", { day:"numeric", month:"long" }) : null;
+
+    const card = document.createElement("div");
+    card.className = "ach-card" + (isUnlocked ? " unlocked" : " locked");
+    card.innerHTML = `
+      <div class="ach-card-icon">${ach.icon}</div>
+      <div class="ach-card-body">
+        <div class="ach-card-label">${ach.label}</div>
+        <div class="ach-card-desc">${ach.desc}</div>
+        ${date ? `<div class="ach-card-date">Låst opp ${date}</div>` : ""}
+      </div>`;
+    grid.appendChild(card);
+  });
+});
+</script>
+</body>
+</html>

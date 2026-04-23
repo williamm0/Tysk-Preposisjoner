@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B&oslash;ying &ndash; Tyske Preposisjoner</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Mode selector ───────────────────────────────────────── */
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .mode-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.1rem 1.25rem;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      text-align: left;
+    }
+    .mode-card:hover { border-color: var(--text2); background: var(--surface2); }
+    .mode-card.active { border-color: var(--text); background: var(--surface); }
+    .mode-card-num {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 0.4rem;
+    }
+    .mode-card h3 { font-size: 0.9375rem; font-weight: 700; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+    .mode-card p  { font-size: 0.8rem; color: var(--text2); line-height: 1.45; }
+
+    /* ── Mode areas ──────────────────────────────────────────── */
+    .mode-area { display: none; }
+    .mode-area.active { display: block; }
+
+    /* ── Declension table ────────────────────────────────────── */
+    .decl-table-wrap {
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+    }
+    .decl-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .decl-table th {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text3);
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .decl-table th:first-child { text-align: left; }
+    .decl-table td {
+      padding: 0.65rem 0.9rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border2);
+      font-size: 0.9375rem;
+    }
+    .decl-table td:first-child {
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text3);
+      white-space: nowrap;
+    }
+    .decl-table tbody tr:last-child td { border-bottom: none; }
+    .decl-table tbody tr:hover { background: var(--surface2); }
+
+    .decl-input {
+      width: 72px;
+      border: none;
+      border-bottom: 2px solid var(--border);
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      color: var(--text);
+      padding: 0.2rem 0;
+      text-align: center;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .decl-input:focus { border-bottom-color: var(--text); }
+    .decl-input.correct { border-bottom-color: var(--dat); color: var(--dat); }
+    .decl-input.wrong   { border-bottom-color: var(--de-red); color: var(--de-red); }
+    .correct-ans {
+      font-size: 0.8rem;
+      color: var(--de-red);
+      font-weight: 600;
+      display: block;
+      margin-top: 0.15rem;
+    }
+
+    /* difficulty strip */
+    .diff-strip {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── Setningsbøying (mode 2) ─────────────────────────────── */
+    .sent-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .sent-question {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.65rem;
+      letter-spacing: -0.01em;
+    }
+    .sent-question .blank {
+      display: inline-block;
+      min-width: 100px;
+      border-bottom: 2px solid var(--text);
+      vertical-align: bottom;
+      color: var(--text3);
+      text-align: center;
+      font-style: italic;
+    }
+    .sent-input-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .sent-input {
+      flex: 1;
+      min-width: 140px;
+      border: none;
+      border-bottom: 2px solid var(--border);
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      color: var(--text);
+      padding: 0.3rem 0;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .sent-input:focus { border-bottom-color: var(--text); }
+    .sent-input.correct { border-bottom-color: var(--dat); color: var(--dat); }
+    .sent-input.wrong   { border-bottom-color: var(--de-red); color: var(--de-red); }
+    .sent-feedback {
+      font-size: 0.8rem;
+      margin-top: 0.4rem;
+    }
+    .sent-feedback.ok  { color: var(--dat); }
+    .sent-feedback.err { color: var(--de-red); }
+    .sent-item .hint-line { margin-top: 0.35rem; font-size: 0.8rem; }
+
+    /* mode 2 score bar */
+    .sent-score-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .sent-score-label { font-size: 0.8rem; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+    .sent-score-num   { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+
+    /* ── Hurtigtest (mode 3) ─────────────────────────────────── */
+    .flash-panel {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .flash-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+    .flash-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--text3);
+      margin-bottom: 0.75rem;
+    }
+    .flash-prompt {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .flash-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .flash-opt {
+      padding: 0.85rem 1rem;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--text);
+      transition: border-color .12s, background .12s;
+      letter-spacing: -0.01em;
+    }
+    .flash-opt:hover:not(:disabled) { border-color: var(--text); background: var(--surface2); }
+    .flash-opt.correct { border-color: var(--dat); background: var(--dat-bg); color: var(--dat); }
+    .flash-opt.wrong   { border-color: var(--de-red); background: #FEF2F2; color: var(--de-red); }
+    .flash-progress {
+      font-size: 0.8rem;
+      color: var(--text3);
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .flash-result {
+      text-align: center;
+      padding: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      max-width: 520px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+<div id="page">
+
+  <header class="page-header">
+    <div class="page-header-eyebrow">
+      <span class="flag-bar"><span class="f1"></span><span class="f2"></span><span class="f3"></span></span>
+      <span>Artikkelbøying</span>
+    </div>
+    <h1>B&oslash;ying</h1>
+    <p>Tren p&aring; artikkelb&oslash;ying i nominativ, akkusativ og dativ for alle genus.</p>
+  </header>
+
+  <!-- Mode selector -->
+  <div class="mode-grid" id="mode-grid">
+    <button class="mode-card active" data-mode="tabell" onclick="switchMode('tabell', this)">
+      <div class="mode-card-num">Modus 1</div>
+      <h3>Fyll inn tabellen</h3>
+      <p>Fyll ut manglende artikkelformer i en 4&times;3 deklinasjonstabell.</p>
+    </button>
+    <button class="mode-card" data-mode="setning" onclick="switchMode('setning', this)">
+      <div class="mode-card-num">Modus 2</div>
+      <h3>Setningsb&oslash;ying</h3>
+      <p>Skriv korrekt artikkel+substantiv i tyske setninger med preposisjoner.</p>
+    </button>
+    <button class="mode-card" data-mode="hurtig" onclick="switchMode('hurtig', this)">
+      <div class="mode-card-num">Modus 3</div>
+      <h3>Hurtigtest</h3>
+      <p>Flashkort-stil: 20 sp&oslash;rsm&aring;l om kasus og genus, velg riktig artikkel.</p>
+    </button>
+    <button class="mode-card" data-mode="prepArt" onclick="switchMode('prepArt', this)">
+      <div class="mode-card-num">Modus 4</div>
+      <h3>Prep. + artikkel</h3>
+      <p>Gitt preposisjon og genus: skriv riktig artikkelform (akkusativ eller dativ).</p>
+    </button>
+    <button class="mode-card" data-mode="roEllerBev" onclick="switchMode('roEllerBev', this)">
+      <div class="mode-card-num">Modus 5</div>
+      <h3>Ro eller bevegelse?</h3>
+      <p>Les setningen og avgjør om verbet uttrykker ro (dativ) eller bevegelse (akkusativ).</p>
+    </button>
+  </div>
+
+  <!-- ── MODE 1: Fyll inn tabellen ──────────────────────────── -->
+  <div class="mode-area active" id="mode-tabell">
+    <div class="section-head">
+      <h2>Fyll inn tabellen</h2>
+    </div>
+    <p class="muted" style="margin-bottom:1.25rem;">Velg vanskelighetsgrad. Blanke felter er celler som har endret seg fra nominativ.</p>
+
+    <div class="diff-strip">
+      <button class="diff-btn active" data-diff-tabell="easy" onclick="setTabellDiff('easy', this)">Lett (4 felt)</button>
+      <button class="diff-btn" data-diff-tabell="medium" onclick="setTabellDiff('medium', this)">Middels (8 felt)</button>
+      <button class="diff-btn" data-diff-tabell="hard" onclick="setTabellDiff('hard', this)">Vanskelig (12 felt)</button>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:1.25rem;">
+      <div class="decl-table-wrap" style="padding:0;">
+        <table class="decl-table" id="decl-table">
+          <thead>
+            <tr>
+              <th>Kasus</th>
+              <th>Maskulin<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.75rem;">der Mann</span></th>
+              <th>Feminin<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.75rem;">die Frau</span></th>
+              <th>N&oslash;ytrum<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.75rem;">das Kind</span></th>
+              <th>Plural<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.75rem;">die Kinder</span></th>
+            </tr>
+          </thead>
+          <tbody id="decl-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-bottom:1rem;">
+      <button class="btn btn-primary" onclick="checkTabell()">Sjekk svar</button>
+      <button class="btn btn-secondary" onclick="resetTabell()">Pr&oslash;v igjen</button>
+    </div>
+    <div id="tabell-feedback" class="feedback"></div>
+  </div>
+
+  <!-- ── MODE 2: Setningsbøying ─────────────────────────────── -->
+  <div class="mode-area" id="mode-setning">
+    <div class="section-head">
+      <h2>Setningsb&oslash;ying</h2>
+    </div>
+    <p class="muted" style="margin-bottom:1.25rem;">Skriv inn riktig artikkel+substantiv i de blanke feltene. Trykk Enter eller klikk Sjekk etter hvert svar.</p>
+
+    <div id="sent-score-bar" class="sent-score-bar">
+      <div>
+        <div class="sent-score-label">Poeng</div>
+        <div class="sent-score-num" id="sent-score">0 / 0</div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="resetSetning()">Nullstill</button>
+    </div>
+
+    <div id="sent-list"></div>
+  </div>
+
+  <!-- ── MODE 4: Prep. + artikkel ─────────────────────────────── -->
+  <div class="mode-area" id="mode-prepArt">
+    <div class="section-head"><h2>Preposisjon + artikkel</h2></div>
+    <p class="muted" style="margin-bottom:1.25rem;">Skriv riktig artikkelform. Tenk: hvilken kasus krever denne preposisjonen? Hva er genus?</p>
+    <div id="prepArt-score-bar" class="sent-score-bar">
+      <div>
+        <div class="sent-score-label">Poeng</div>
+        <div class="sent-score-num" id="prepArt-score">0 / 0</div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="buildPrepArt()">Nullstill</button>
+    </div>
+    <div id="prepArt-list"></div>
+  </div>
+
+  <!-- ── MODE 5: Ro eller bevegelse ───────────────────────────── -->
+  <div class="mode-area" id="mode-roEllerBev">
+    <div class="section-head"><h2>Ro eller bevegelse?</h2></div>
+    <p class="muted" style="margin-bottom:1.25rem;">Les setningen. Klikk <strong>Ro (Dativ)</strong> eller <strong>Bevegelse (Akkusativ)</strong>.</p>
+    <div id="rob-start" class="flash-result" style="margin-bottom:1.5rem;">
+      <p style="font-size:1.05rem;font-weight:700;margin-bottom:.5rem;">Ro eller bevegelse?</p>
+      <p class="muted small" style="margin-bottom:1.25rem;">20 setninger med Wechselpräpositionen. Avgjør kasus basert p&aring; kontekst.</p>
+      <button class="btn btn-primary" onclick="startRoB()">Start &rarr;</button>
+    </div>
+    <div id="rob-play" class="hidden">
+      <div class="flash-panel">
+        <div class="flash-progress" id="rob-progress">Setning 1 av 20</div>
+        <div class="flash-card" id="rob-card">
+          <div class="flash-label" id="rob-prep"></div>
+          <div class="flash-prompt" id="rob-sent" style="font-size:1.1rem;line-height:1.5;"></div>
+        </div>
+        <div class="flash-options" id="rob-options">
+          <button class="flash-opt" onclick="checkRoB(this,'dativ')">Ro (Dativ)</button>
+          <button class="flash-opt" onclick="checkRoB(this,'akkusativ')">Bevegelse (Akkusativ)</button>
+        </div>
+        <div class="feedback" id="rob-feedback"></div>
+        <div class="ex-actions" id="rob-actions">
+          <button class="btn btn-primary" onclick="nextRoB()">Neste &rarr;</button>
+        </div>
+      </div>
+    </div>
+    <div id="rob-result" class="hidden flash-result">
+      <p class="small muted" style="margin-bottom:.75rem;">Ro eller bevegelse?</p>
+      <div class="score-ring" id="rob-ring">
+        <span class="score-num" id="rob-score-num"></span>
+        <span class="score-pct" id="rob-score-pct"></span>
+      </div>
+      <p style="font-size:1.05rem;font-weight:700;margin-bottom:.35rem;" id="rob-msg"></p>
+      <button class="btn btn-primary" style="margin-top:.75rem;" onclick="startRoB()">Pr&oslash;v igjen</button>
+    </div>
+  </div>
+
+  <!-- ── MODE 3: Hurtigtest ─────────────────────────────────── -->
+  <div class="mode-area" id="mode-hurtig">
+    <div id="hurtig-start" class="flash-result" style="margin-bottom:1.5rem;">
+      <p style="font-size:1.05rem;font-weight:700;margin-bottom:.5rem;">Hurtigtest</p>
+      <p class="muted small" style="margin-bottom:1.25rem;">20 tilfeldige sp&oslash;rsm&aring;l om genus og kasus. Velg riktig artikkel blant fire knapper.</p>
+      <button class="btn btn-primary" onclick="startHurtig()">Start &rarr;</button>
+    </div>
+    <div id="hurtig-play" class="hidden">
+      <div class="flash-panel">
+        <div class="flash-progress" id="hurtig-progress">Sp&oslash;rsm&aring;l 1 av 20</div>
+        <div class="flash-card" id="hurtig-card">
+          <div class="flash-label" id="hurtig-label"></div>
+          <div class="flash-prompt" id="hurtig-prompt"></div>
+        </div>
+        <div class="flash-options" id="hurtig-options"></div>
+        <div class="feedback" id="hurtig-feedback"></div>
+        <div class="ex-actions" id="hurtig-actions">
+          <button class="btn btn-primary" onclick="nextHurtig()">Neste &rarr;</button>
+        </div>
+      </div>
+    </div>
+    <div id="hurtig-result" class="hidden flash-result">
+      <p class="small muted" style="margin-bottom:.75rem;">Hurtigtest</p>
+      <div class="score-ring" id="hurtig-ring">
+        <span class="score-num" id="hurtig-score-num"></span>
+        <span class="score-pct" id="hurtig-score-pct"></span>
+      </div>
+      <p style="font-size:1.05rem;font-weight:700;margin-bottom:.35rem;" id="hurtig-msg"></p>
+      <p class="muted small" style="margin-bottom:1.75rem;" id="hurtig-detail"></p>
+      <button class="btn btn-primary" onclick="startHurtig()">Pr&oslash;v igjen</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/achievements.js"></script>
+<script>
+// ── Mode switching ────────────────────────────────────────────
+
+function switchMode(mode, btn) {
+  document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("active"));
+  document.querySelectorAll(".mode-area").forEach(a => a.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("mode-" + mode).classList.add("active");
+}
+
+// ── MODE 1: Fyll inn tabellen ─────────────────────────────────
+
+// Which cells to blank per difficulty:
+// easy:   4 cells  = all changed cells in dativ row (mask, fem, nøyt, pl)
+// medium: 8 cells  = all dativ + all akkusativ changed (just mask)… actually we blank
+//                    the 4 changed dativ cells + all akkusativ changed + 3 more
+//         Plan: easy=dativ 4, medium=dativ 4 + akkusativ 1 + nominativ-row all 4 (but nom never changed)
+//         Better: easy = 4 dativ, medium = 4 dativ + 4 akkusativ cols (mask only changes but reveal all in akk row),
+//                 hard = every non-nominativ cell (all 12 cells across akk+dat rows, i.e. 4+4+4 wait that's only 8 per
+//                        two rows x 4 cols = 8 changed cells, task says "all 12 changed cells")
+//         ARTICLE_TABLE: nom has 0 changed, akk has 1 changed (mask), dat has 4 changed.
+//         Total "changed" = 5. Task says: easy=4, medium=8, hard=12.
+//         We interpret: blank N cells randomly chosen from the 4x3 non-nominativ grid (12 cells).
+//         easy: 4 blanks, medium: 8 blanks, hard: all 12 blanks.
+
+let tabellDiff = "easy";
+let tabellBlanked = []; // [{row, col, answer}]
+
+const COLS = ["mask","fem","nøyt","pl"];
+const COL_LABELS = ["Maskulin","Feminin","Nøytrum","Plural"];
+
+function setTabellDiff(diff, btn) {
+  tabellDiff = diff;
+  document.querySelectorAll("[data-diff-tabell]").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  buildTabell();
+}
+
+function buildTabell() {
+  const countMap = { easy: 4, medium: 8, hard: 12 };
+  const count = countMap[tabellDiff];
+
+  // All non-nominativ cells: rows 1 (akk) and 2 (dat), cols 0-3
+  const candidates = [];
+  ARTICLE_TABLE.rows.forEach((row, ri) => {
+    if (ri === 0) return; // skip nominativ
+    COLS.forEach((col, ci) => {
+      candidates.push({ row: ri, col: ci, answer: row[col] });
+    });
+  });
+
+  // Shuffle and pick `count`
+  const picked = shuffle(candidates).slice(0, count);
+  tabellBlanked = picked;
+
+  const tbody = document.getElementById("decl-tbody");
+  tbody.innerHTML = ARTICLE_TABLE.rows.map((row, ri) => {
+    const cells = COLS.map((col, ci) => {
+      const blank = tabellBlanked.find(b => b.row === ri && b.col === ci);
+      if (blank) {
+        return `<td><input class="decl-input" id="cell-${ri}-${ci}" type="text" maxlength="4" autocomplete="off" spellcheck="false" /></td>`;
+      }
+      return `<td style="font-weight:${row.changed.includes(col) ? '800;color:var(--akk)' : '400'}">${row[col]}</td>`;
+    });
+    return `<tr><td>${row.kasus}</td>${cells.join("")}</tr>`;
+  }).join("");
+
+  // Restore feedback
+  const fb = document.getElementById("tabell-feedback");
+  fb.className = "feedback";
+  fb.innerHTML = "";
+
+  // Enter key on last input submits
+  const inputs = tbody.querySelectorAll(".decl-input");
+  inputs.forEach((inp, idx) => {
+    inp.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        if (idx < inputs.length - 1) inputs[idx + 1].focus();
+        else checkTabell();
+      }
+    });
+  });
+  if (inputs[0]) setTimeout(() => inputs[0].focus(), 40);
+}
+
+function checkTabell() {
+  let correct = 0;
+  tabellBlanked.forEach(({ row, col, answer }) => {
+    const inp = document.getElementById(`cell-${row}-${col}`);
+    if (!inp) return;
+    const val = inp.value.trim().toLowerCase();
+    const ok  = val === answer.toLowerCase();
+    inp.classList.remove("correct","wrong");
+    inp.classList.add(ok ? "correct" : "wrong");
+    inp.disabled = true;
+    if (!ok) {
+      // show correct answer below input
+      let span = inp.parentElement.querySelector(".correct-ans");
+      if (!span) { span = document.createElement("span"); span.className = "correct-ans"; inp.parentElement.appendChild(span); }
+      span.textContent = answer;
+    }
+    if (ok) correct++;
+  });
+
+  const total = tabellBlanked.length;
+  const pct = Math.round((correct / total) * 100);
+  const ok = correct === total;
+  const fb = document.getElementById("tabell-feedback");
+  fb.className = "feedback show";
+  fb.innerHTML = `
+    <div class="feedback-status ${ok ? 'ok' : 'err'}">
+      <span class="feedback-icon ${ok ? 'ok' : 'err'}">${ok ? '&#10003;' : '&#10007;'}</span>
+      ${correct} av ${total} riktige (${pct}%)
+    </div>
+    ${ok ? '<p class="feedback-exp">Alle riktige! Godt jobbet.</p>' : '<p class="feedback-exp">Feil er markert i r&oslash;dt med riktig svar under.</p>'}`;
+}
+
+function resetTabell() {
+  buildTabell();
+}
+
+// ── MODE 2: Setningsbøying ────────────────────────────────────
+
+const SENT_EXERCISES = [
+  { prep: "durch",   prompt: "Er l&auml;uft durch ___ (der Wald, Akk.)",                   answers: ["den Wald"],                            hint: "durch + Akk.: der &rarr; den" },
+  { prep: "f&uuml;r", prompt: "Das Geschenk ist f&uuml;r ___ (die Mutter, Akk.)",          answers: ["die Mutter"],                          hint: "f&uuml;r + Akk.: die &rarr; die" },
+  { prep: "mit",     prompt: "Ich fahre mit ___ (der Bus, Dat.)",                           answers: ["dem Bus"],                             hint: "mit + Dat.: der &rarr; dem" },
+  { prep: "zu",      prompt: "Wir gehen zu ___ (die Schule, Dat.)",                         answers: ["zur Schule", "zu der Schule"],          hint: "zu + Dat. (zur = zu+der)" },
+  { prep: "in",      prompt: "Wir gehen in ___ (das Kino, Akk.)",                           answers: ["ins Kino", "in das Kino"],              hint: "in + Akk. (ins = in+das)" },
+  { prep: "auf",     prompt: "Das Buch liegt auf ___ (der Tisch, Dat.)",                    answers: ["dem Tisch"],                           hint: "auf + Dat. (ro): der &rarr; dem" },
+  { prep: "an",      prompt: "Er h&auml;ngt das Bild an ___ (die Wand, Akk.)",              answers: ["die Wand"],                            hint: "an + Akk. (bevegelse): die &rarr; die" },
+  { prep: "von",     prompt: "Das Buch ist von ___ (der Lehrer, Dat.)",                     answers: ["dem Lehrer"],                          hint: "von + Dat.: der &rarr; dem" },
+  { prep: "bei",     prompt: "Er ist bei ___ (die Arbeit, Dat.)",                           answers: ["der Arbeit"],                          hint: "bei + Dat.: die &rarr; der" },
+  { prep: "&uuml;ber", prompt: "&Uuml;ber ___ (das Thema, Akk.) spricht er gern.",         answers: ["das Thema"],                           hint: "&uuml;ber + Akk.: das &rarr; das" },
+  { prep: "seit",    prompt: "Ich lerne seit ___ (drei Jahre, Dat.) Deutsch.",              answers: ["drei Jahren"],                         hint: "seit + Dat.: Jahre &rarr; Jahren (flertall +n)" },
+  { prep: "um",      prompt: "Wir laufen um ___ (der See, Akk.).",                          answers: ["den See"],                             hint: "um + Akk.: der &rarr; den" },
+  { prep: "gegen",   prompt: "Wir spielen gegen ___ (der Wind, Akk.).",                     answers: ["den Wind"],                            hint: "gegen + Akk.: der &rarr; den" },
+  { prep: "hinter",  prompt: "Der Hund sitzt hinter ___ (das Haus, Dat.).",                 answers: ["dem Haus"],                            hint: "hinter + Dat. (ro): das &rarr; dem" },
+  { prep: "neben",   prompt: "Das Caf&eacute; liegt neben ___ (die Kirche, Dat.).",         answers: ["der Kirche"],                          hint: "neben + Dat. (ro): die &rarr; der" },
+  { prep: "aus",     prompt: "Er kommt aus ___ (die Schweiz, Dat.)",                        answers: ["der Schweiz"],                         hint: "aus + Dat.: die &rarr; der" },
+  { prep: "nach",    prompt: "Nach ___ (das Abendessen, Dat.) gehe ich schlafen.",          answers: ["dem Abendessen"],                      hint: "nach + Dat.: das &rarr; dem" },
+  { prep: "vor",     prompt: "Das Auto steht vor ___ (die Garage, Dat.)",                   answers: ["der Garage"],                          hint: "vor + Dat. (ro): die &rarr; der" },
+  { prep: "vor",     prompt: "Er f&auml;hrt das Auto vor ___ (die Garage, Akk.)",           answers: ["die Garage"],                          hint: "vor + Akk. (bevegelse): die &rarr; die" },
+  { prep: "unter",   prompt: "Die Katze schl&auml;ft unter ___ (das Bett, Dat.)",           answers: ["dem Bett"],                            hint: "unter + Dat. (ro): das &rarr; dem" },
+  { prep: "unter",   prompt: "Die Katze kriecht unter ___ (das Bett, Akk.)",                answers: ["das Bett"],                            hint: "unter + Akk. (bevegelse): das &rarr; das" },
+  { prep: "zwischen", prompt: "Das Heft liegt zwischen ___ (die B&uuml;cher, Dat.)",        answers: ["den B\u00fcchern"],                    hint: "zwischen + Dat.: die (pl.) &rarr; den, substantiv +n" },
+  { prep: "zwischen", prompt: "Er legt das Heft zwischen ___ (die B&uuml;cher, Akk.)",      answers: ["die B\u00fccher"],                     hint: "zwischen + Akk.: die (pl.) &rarr; die" },
+  { prep: "an",      prompt: "Das Bild h&auml;ngt an ___ (die Wand, Dat.)",                 answers: ["der Wand"],                            hint: "an + Dat. (ro): die &rarr; der" },
+  { prep: "auf",     prompt: "Ich lege das Buch auf ___ (der Tisch, Akk.)",                 answers: ["den Tisch"],                           hint: "auf + Akk. (bevegelse): der &rarr; den" },
+  { prep: "beim",    prompt: "Ich treffe ihn beim ___ (das Eingang... der Eingang, Dat.)",  answers: ["beim Eingang", "dem Eingang"],          hint: "bei + dem = beim (maskulin dativ)" },
+  { prep: "zum",     prompt: "Wir fahren zum ___ (der Bahnhof, Dat.)",                      answers: ["Bahnhof", "zum Bahnhof"],               hint: "zu + dem = zum (maskulin dativ)" },
+  { prep: "&uuml;ber", prompt: "Die Lampe h&auml;ngt &uuml;ber ___ (der Tisch, Dat.)",    answers: ["dem Tisch"],                           hint: "&uuml;ber + Dat. (ro): der &rarr; dem" },
+  { prep: "gegen",   prompt: "Er lehnt das Fahrrad gegen ___ (die Wand, Akk.)",             answers: ["die Wand"],                            hint: "gegen + Akk.: die &rarr; die" },
+  { prep: "au&szlig;er", prompt: "Alle au&szlig;er ___ (der Chef, Dat.) lachen.",           answers: ["dem Chef"],                            hint: "au&szlig;er + Dat.: der &rarr; dem" },
+];
+
+let sentCorrect = 0;
+let sentAnswered = 0;
+
+function buildSetning() {
+  sentCorrect = 0;
+  sentAnswered = 0;
+  updateSentScore();
+
+  const list = document.getElementById("sent-list");
+  list.innerHTML = SENT_EXERCISES.map((ex, i) => `
+    <div class="sent-item" id="sent-item-${i}">
+      <div class="sent-question">${ex.prompt.replace("___", '<span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>')}</div>
+      <div class="hint-line">Hint: ${ex.hint}</div>
+      <div class="sent-input-row">
+        <input class="sent-input" id="sent-inp-${i}" type="text"
+          placeholder="Skriv svar&hellip;"
+          autocomplete="off" spellcheck="false"
+          onkeydown="if(event.key==='Enter') checkSent(${i})" />
+        <button class="btn btn-primary btn-sm" id="sent-btn-${i}" onclick="checkSent(${i})">Sjekk</button>
+      </div>
+      <div class="sent-feedback" id="sent-fb-${i}"></div>
+    </div>`).join("");
+}
+
+function normalize(s) {
+  return s.trim().toLowerCase().replace(/\s+/g," ");
+}
+
+function checkSent(i) {
+  const ex  = SENT_EXERCISES[i];
+  const inp = document.getElementById(`sent-inp-${i}`);
+  const btn = document.getElementById(`sent-btn-${i}`);
+  const fb  = document.getElementById(`sent-fb-${i}`);
+  if (!inp || inp.disabled) return;
+  const val = normalize(inp.value);
+  if (!val) return;
+
+  const ok = ex.answers.some(a => normalize(a) === val);
+  inp.classList.add(ok ? "correct" : "wrong");
+  inp.disabled = true;
+  btn.disabled = true;
+
+  fb.className = "sent-feedback " + (ok ? "ok" : "err");
+  if (ok) {
+    fb.textContent = "Riktig!";
+    sentCorrect++;
+  } else {
+    fb.innerHTML = `Feil. Riktig: <strong>${ex.answers[0]}</strong>`;
+  }
+  sentAnswered++;
+  updateSentScore();
+}
+
+function updateSentScore() {
+  document.getElementById("sent-score").textContent = `${sentCorrect} / ${sentAnswered}`;
+}
+
+function resetSetning() {
+  buildSetning();
+}
+
+// ── MODE 3: Hurtigtest ────────────────────────────────────────
+
+// Generate all gender+case combos from ARTICLE_TABLE
+function generateHurtigQuestions(count) {
+  const pool = [];
+  const genusLabels = ["Maskulin", "Feminin", "N\u00f8ytrum", "Plural"];
+  const genusKeys   = ["mask", "fem", "n\u00f8yt", "pl"];
+  const kasusLabels = ["Nominativ", "Akkusativ", "Dativ"];
+
+  ARTICLE_TABLE.rows.forEach((row, ri) => {
+    genusKeys.forEach((key, gi) => {
+      const answer = row[key];
+      // Distractors: all other forms in this row + others
+      const allForms = ["der","die","das","den","dem"];
+      const options = shuffle(allForms.filter(f => f !== answer)).slice(0, 3);
+      options.push(answer);
+      pool.push({
+        label: kasusLabels[ri],
+        prompt: `${genusLabels[gi]} i ${kasusLabels[ri].toLowerCase()}`,
+        answer,
+        options: shuffle(options),
+      });
+    });
+  });
+
+  return shuffle(pool).slice(0, Math.min(count, pool.length));
+}
+
+let hurtigQuestions = [];
+let hurtigIndex = 0;
+let hurtigCorrect = 0;
+
+function startHurtig() {
+  hurtigQuestions = generateHurtigQuestions(20);
+  hurtigIndex = 0;
+  hurtigCorrect = 0;
+
+  document.getElementById("hurtig-start").classList.add("hidden");
+  document.getElementById("hurtig-result").classList.add("hidden");
+  document.getElementById("hurtig-play").classList.remove("hidden");
+  showHurtigQuestion();
+}
+
+function showHurtigQuestion() {
+  const q = hurtigQuestions[hurtigIndex];
+  document.getElementById("hurtig-progress").textContent =
+    `Sp\u00f8rsm\u00e5l ${hurtigIndex + 1} av ${hurtigQuestions.length}`;
+  document.getElementById("hurtig-label").textContent = q.label;
+  document.getElementById("hurtig-prompt").textContent = q.prompt;
+
+  const opts = document.getElementById("hurtig-options");
+  opts.innerHTML = q.options.map(o =>
+    `<button class="flash-opt" onclick="checkHurtig(this,'${o}')">${o}</button>`
+  ).join("");
+
+  document.getElementById("hurtig-feedback").className = "feedback";
+  document.getElementById("hurtig-feedback").innerHTML = "";
+  document.getElementById("hurtig-actions").className = "ex-actions";
+}
+
+function checkHurtig(btn, chosen) {
+  const q = hurtigQuestions[hurtigIndex];
+  const ok = chosen === q.answer;
+  document.querySelectorAll(".flash-opt").forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.answer) b.classList.add("correct");
+  });
+  if (!ok) btn.classList.add("wrong");
+
+  const fb = document.getElementById("hurtig-feedback");
+  fb.className = "feedback show";
+  fb.innerHTML = `
+    <div class="feedback-status ${ok ? 'ok' : 'err'}">
+      <span class="feedback-icon ${ok ? 'ok' : 'err'}">${ok ? '&#10003;' : '&#10007;'}</span>
+      ${ok ? 'Riktig' : 'Feil, riktig svar: <strong>' + q.answer + '</strong>'}
+    </div>`;
+
+  if (ok) hurtigCorrect++;
+  document.getElementById("hurtig-actions").className = "ex-actions show";
+}
+
+function nextHurtig() {
+  hurtigIndex++;
+  if (hurtigIndex >= hurtigQuestions.length) {
+    showHurtigResult();
+  } else {
+    showHurtigQuestion();
+  }
+}
+
+function showHurtigResult() {
+  document.getElementById("hurtig-play").classList.add("hidden");
+  const result = document.getElementById("hurtig-result");
+  result.classList.remove("hidden");
+  const total = hurtigQuestions.length;
+  const pct   = Math.round((hurtigCorrect / total) * 100);
+  const ring   = pct >= 80 ? "ok" : pct >= 50 ? "mid" : "low";
+  const msg    = pct >= 80 ? "Godt jobbet!" : pct >= 50 ? "Bra innsats." : "\u00d8v litt mer.";
+  document.getElementById("hurtig-ring").className = "score-ring " + ring;
+  document.getElementById("hurtig-score-num").textContent = `${hurtigCorrect}/${total}`;
+  document.getElementById("hurtig-score-pct").textContent = pct + "%";
+  document.getElementById("hurtig-msg").textContent = msg;
+  document.getElementById("hurtig-detail").textContent = `${hurtigCorrect} av ${total} riktig`;
+}
+
+// ── MODE 4: Prep. + artikkel ──────────────────────────────────
+
+const PREP_ART_EXERCISES = [
+  { prompt: "durch + <strong>der</strong> Wald", answer: "den", hint: "durch = alltid akkusativ, maskulin" },
+  { prompt: "für + <strong>die</strong> Mutter", answer: "die", hint: "für = alltid akkusativ, feminin uforandret" },
+  { prompt: "für + <strong>das</strong> Kind",   answer: "das", hint: "für = alltid akkusativ, nøytrum uforandret" },
+  { prompt: "für + <strong>der</strong> Vater",  answer: "den", hint: "für = alltid akkusativ, maskulin: der → den" },
+  { prompt: "mit + <strong>der</strong> Bus",    answer: "dem", hint: "mit = alltid dativ, maskulin: der → dem" },
+  { prompt: "mit + <strong>die</strong> Bahn",   answer: "der", hint: "mit = alltid dativ, feminin: die → der" },
+  { prompt: "mit + <strong>das</strong> Auto",   answer: "dem", hint: "mit = alltid dativ, nøytrum: das → dem" },
+  { prompt: "bei + <strong>der</strong> Arzt",   answer: "dem", hint: "bei = alltid dativ, maskulin: der → dem" },
+  { prompt: "bei + <strong>die</strong> Arbeit", answer: "der", hint: "bei = alltid dativ, feminin: die → der" },
+  { prompt: "von + <strong>der</strong> Lehrer", answer: "dem", hint: "von = alltid dativ, maskulin: der → dem" },
+  { prompt: "zu + <strong>die</strong> Schule",  answer: "der", hint: "zu = alltid dativ, feminin: die → der. Kontraksjon: zur" },
+  { prompt: "zu + <strong>der</strong> Bahnhof", answer: "dem", hint: "zu = alltid dativ, maskulin: der → dem. Kontraksjon: zum" },
+  { prompt: "aus + <strong>die</strong> Schweiz",answer: "der", hint: "aus = alltid dativ, feminin: die → der" },
+  { prompt: "seit + <strong>der</strong> Montag",answer: "dem", hint: "seit = alltid dativ, maskulin: der → dem" },
+  { prompt: "gegen + <strong>der</strong> Wind", answer: "den", hint: "gegen = alltid akkusativ, maskulin: der → den" },
+  { prompt: "ohne + <strong>der</strong> Vater", answer: "den", hint: "ohne = alltid akkusativ, maskulin: der → den" },
+  { prompt: "um + <strong>der</strong> See",     answer: "den", hint: "um = alltid akkusativ, maskulin: der → den" },
+  { prompt: "auf (ro) + <strong>der</strong> Tisch",  answer: "dem", hint: "auf + Dativ (Wo?): der → dem" },
+  { prompt: "auf (bev.) + <strong>der</strong> Tisch",answer: "den", hint: "auf + Akkusativ (Wohin?): der → den" },
+  { prompt: "in (ro) + <strong>die</strong> Schule",  answer: "der", hint: "in + Dativ (Wo?): die → der" },
+  { prompt: "in (bev.) + <strong>die</strong> Schule",answer: "die", hint: "in + Akkusativ (Wohin?): die → die" },
+  { prompt: "an (ro) + <strong>die</strong> Wand",    answer: "der", hint: "an + Dativ (Wo?): die → der" },
+  { prompt: "an (bev.) + <strong>die</strong> Wand",  answer: "die", hint: "an + Akkusativ (Wohin?): die → die" },
+  { prompt: "hinter (ro) + <strong>das</strong> Haus",    answer: "dem", hint: "hinter + Dativ (Wo?): das → dem" },
+  { prompt: "hinter (bev.) + <strong>das</strong> Haus",  answer: "das", hint: "hinter + Akkusativ (Wohin?): das → das" },
+  { prompt: "neben (ro) + <strong>die</strong> Kirche",   answer: "der", hint: "neben + Dativ (Wo?): die → der" },
+  { prompt: "über (ro) + <strong>der</strong> Tisch",     answer: "dem", hint: "über + Dativ (Wo?): der → dem" },
+  { prompt: "unter (bev.) + <strong>das</strong> Bett",   answer: "das", hint: "unter + Akkusativ (Wohin?): das → das" },
+  { prompt: "vor (ro) + <strong>das</strong> Haus",       answer: "dem", hint: "vor + Dativ (Wo?): das → dem" },
+  { prompt: "zwischen (bev.) + <strong>die</strong> Bücher (pl.)", answer: "die", hint: "zwischen + Akkusativ: flertall → die" },
+];
+
+const ART_OPTIONS = ["der","die","das","den","dem"];
+
+let paCorrect = 0, paAnswered = 0;
+
+function buildPrepArt() {
+  paCorrect = 0; paAnswered = 0;
+  document.getElementById("prepArt-score").textContent = "0 / 0";
+  const pool = shuffle([...PREP_ART_EXERCISES]).slice(0, 20);
+  document.getElementById("prepArt-list").innerHTML = pool.map((ex, i) => `
+    <div class="sent-item" id="pa-item-${i}">
+      <div class="sent-question">${ex.prompt} = ___</div>
+      <div class="hint-line">Hint: ${ex.hint}</div>
+      <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem;" id="pa-opts-${i}">
+        ${ART_OPTIONS.map(o => `<button class="flash-opt" style="padding:.55rem .9rem;font-size:.9375rem;" onclick="checkPA(${i},this,'${o}','${ex.answer}')">${o}</button>`).join("")}
+      </div>
+      <div class="sent-feedback" id="pa-fb-${i}"></div>
+    </div>`).join("");
+}
+
+function checkPA(i, btn, chosen, answer) {
+  const ok = chosen === answer;
+  document.querySelectorAll(`#pa-opts-${i} .flash-opt`).forEach(b => {
+    b.disabled = true;
+    if (b.textContent === answer) b.classList.add("correct");
+  });
+  if (!ok) btn.classList.add("wrong");
+  const fb = document.getElementById(`pa-fb-${i}`);
+  fb.className = "sent-feedback " + (ok ? "ok" : "err");
+  fb.textContent = ok ? "Riktig!" : `Feil. Riktig: ${answer}`;
+  if (ok) paCorrect++;
+  paAnswered++;
+  document.getElementById("prepArt-score").textContent = `${paCorrect} / ${paAnswered}`;
+}
+
+// ── MODE 5: Ro eller bevegelse ────────────────────────────────
+
+const ROB_QUESTIONS = [
+  { sent: "Das Buch liegt auf dem Tisch.", prep: "auf", answer: "dativ",     exp: "liegen = ro (Wo?) \u2192 Dativ" },
+  { sent: "Ich lege das Buch auf den Tisch.", prep: "auf", answer: "akkusativ", exp: "legen = bevegelse (Wohin?) \u2192 Akkusativ" },
+  { sent: "Das Bild h\u00e4ngt an der Wand.", prep: "an", answer: "dativ",    exp: "h\u00e4ngen (intrans.) = ro \u2192 Dativ" },
+  { sent: "Er h\u00e4ngt das Bild an die Wand.", prep: "an", answer: "akkusativ", exp: "h\u00e4ngen (trans.) = bevegelse \u2192 Akkusativ" },
+  { sent: "Die Katze sitzt unter dem Bett.", prep: "unter", answer: "dativ",  exp: "sitzen = ro \u2192 Dativ" },
+  { sent: "Die Katze kriecht unter das Bett.", prep: "unter", answer: "akkusativ", exp: "kriechen inn under = bevegelse \u2192 Akkusativ" },
+  { sent: "Er sitzt neben mir.", prep: "neben", answer: "dativ",              exp: "sitzen = ro \u2192 Dativ" },
+  { sent: "Er stellt sich neben mich.", prep: "neben", answer: "akkusativ",   exp: "sich stellen = plassere seg = bevegelse \u2192 Akkusativ" },
+  { sent: "Das Auto steht vor dem Haus.", prep: "vor", answer: "dativ",       exp: "stehen = ro \u2192 Dativ" },
+  { sent: "Er f\u00e4hrt das Auto vor das Haus.", prep: "vor", answer: "akkusativ", exp: "fahren (bev.) \u2192 Akkusativ" },
+  { sent: "Die Lampe h\u00e4ngt \u00fcber dem Tisch.", prep: "\u00fcber", answer: "dativ", exp: "h\u00e4ngen (ro) \u2192 Dativ" },
+  { sent: "Er h\u00e4ngt die Lampe \u00fcber den Tisch.", prep: "\u00fcber", answer: "akkusativ", exp: "h\u00e4ngen (bev.) \u2192 Akkusativ" },
+  { sent: "Ich bin in der Schule.", prep: "in", answer: "dativ",              exp: "sein = ro \u2192 Dativ" },
+  { sent: "Ich gehe in die Schule.", prep: "in", answer: "akkusativ",         exp: "gehen inn i = bevegelse \u2192 Akkusativ" },
+  { sent: "Er wartet hinter dem Haus.", prep: "hinter", answer: "dativ",      exp: "warten = ro \u2192 Dativ" },
+  { sent: "Er geht hinter das Haus.", prep: "hinter", answer: "akkusativ",    exp: "gehen bak = bevegelse \u2192 Akkusativ" },
+  { sent: "Das Heft liegt zwischen den B\u00fcchern.", prep: "zwischen", answer: "dativ", exp: "liegen = ro \u2192 Dativ" },
+  { sent: "Sie legt das Heft zwischen die B\u00fccher.", prep: "zwischen", answer: "akkusativ", exp: "legen = bevegelse \u2192 Akkusativ" },
+  { sent: "Das Kind sitzt auf dem Baum.", prep: "auf", answer: "dativ",       exp: "sitzen oppe i = ro \u2192 Dativ" },
+  { sent: "Das Kind klettert auf den Baum.", prep: "auf", answer: "akkusativ",exp: "klettern opp p\u00e5 = bevegelse \u2192 Akkusativ" },
+];
+
+let robQuestions = [], robIndex = 0, robCorrect = 0;
+
+function startRoB() {
+  robQuestions = shuffle([...ROB_QUESTIONS]).slice(0, 20);
+  robIndex = 0; robCorrect = 0;
+  document.getElementById("rob-start").classList.add("hidden");
+  document.getElementById("rob-result").classList.add("hidden");
+  document.getElementById("rob-play").classList.remove("hidden");
+  showRoBQuestion();
+}
+
+function showRoBQuestion() {
+  const q = robQuestions[robIndex];
+  document.getElementById("rob-progress").textContent = `Setning ${robIndex + 1} av ${robQuestions.length}`;
+  document.getElementById("rob-prep").textContent = q.prep;
+  document.getElementById("rob-sent").textContent = q.sent;
+  document.querySelectorAll("#rob-options .flash-opt").forEach(b => { b.disabled = false; b.className = "flash-opt"; });
+  document.getElementById("rob-feedback").className = "feedback";
+  document.getElementById("rob-feedback").innerHTML = "";
+  document.getElementById("rob-actions").className = "ex-actions";
+}
+
+function checkRoB(btn, chosen) {
+  const q = robQuestions[robIndex];
+  const ok = chosen === q.answer;
+  document.querySelectorAll("#rob-options .flash-opt").forEach(b => {
+    b.disabled = true;
+    const isRight = (b.textContent.includes("Dativ") && q.answer === "dativ") ||
+                    (b.textContent.includes("Akkusativ") && q.answer === "akkusativ");
+    if (isRight) b.classList.add("correct");
+  });
+  if (!ok) btn.classList.add("wrong");
+  const fb = document.getElementById("rob-feedback");
+  fb.className = "feedback show";
+  fb.innerHTML = `<div class="feedback-status ${ok ? "ok" : "err"}"><span class="feedback-icon ${ok ? "ok" : "err"}">${ok ? "&#10003;" : "&#10007;"}</span>${ok ? "Riktig" : "Feil"}</div><p class="feedback-exp">${q.exp}</p>`;
+  if (ok) robCorrect++;
+  document.getElementById("rob-actions").className = "ex-actions show";
+}
+
+function nextRoB() {
+  robIndex++;
+  if (robIndex >= robQuestions.length) {
+    document.getElementById("rob-play").classList.add("hidden");
+    const res = document.getElementById("rob-result");
+    res.classList.remove("hidden");
+    const pct = Math.round((robCorrect / robQuestions.length) * 100);
+    const ring = pct >= 80 ? "ok" : pct >= 50 ? "mid" : "low";
+    document.getElementById("rob-ring").className = "score-ring " + ring;
+    document.getElementById("rob-score-num").textContent = `${robCorrect}/${robQuestions.length}`;
+    document.getElementById("rob-score-pct").textContent = pct + "%";
+    document.getElementById("rob-msg").textContent = pct >= 80 ? "Godt jobbet!" : pct >= 50 ? "Bra innsats." : "Fortsett å øve.";
+  } else {
+    showRoBQuestion();
+  }
+}
+
+// ── Boot ──────────────────────────────────────────────────────
+
+document.addEventListener("DOMContentLoaded", () => {
+  buildTabell();
+  buildSetning();
+  buildPrepArt();
+});
+</script>
+</body>
+</html>

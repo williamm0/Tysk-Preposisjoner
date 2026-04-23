@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Innstillinger &ndash; Tyske Preposisjoner</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="page">
+
+  <header class="page-header">
+    <div class="page-header-eyebrow">
+      <span class="flag-bar"><span class="f1"></span><span class="f2"></span><span class="f3"></span></span>
+      <span>Tilpass</span>
+    </div>
+    <h1>Innstillinger</h1>
+    <p>Tilpass opplevelsen etter dine preferanser.</p>
+  </header>
+
+  <!-- UTSEENDE -->
+  <section class="settings-section">
+    <h2 class="settings-heading">Utseende</h2>
+
+    <div class="settings-block">
+      <label class="settings-label">Fargetema</label>
+      <div class="theme-cards" id="theme-cards">
+        <button class="theme-card" data-theme="light">
+          <span class="theme-preview theme-preview-light"></span>
+          <span>Lys</span>
+        </button>
+        <button class="theme-card" data-theme="dark">
+          <span class="theme-preview theme-preview-dark"></span>
+          <span>Mørk</span>
+        </button>
+        <button class="theme-card" data-theme="system">
+          <span class="theme-preview theme-preview-system"></span>
+          <span>System</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Kompakt visning</div>
+          <div class="settings-sub">Reduserer luft og mellomrom for mer innhold p&aring; skjermen</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="compact-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">H&oslash;y kontrast</div>
+          <div class="settings-sub">Sterkere farger p&aring; tekst og kanter for bedre lesbarhet</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="contrast-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- LYD -->
+  <section class="settings-section">
+    <h2 class="settings-heading">Lyd</h2>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Lydeffekter</div>
+          <div class="settings-sub">Lyder i spill og ved riktige/feil svar</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="snd-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-block" id="vol-block">
+      <label class="settings-label" for="vol-slider">Volum</label>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span class="settings-sub" style="min-width:1.5rem;text-align:right;" id="vol-label">55%</span>
+        <input type="range" id="vol-slider" min="0" max="100" value="55"
+          style="flex:1;accent-color:var(--text);height:4px;cursor:pointer;" />
+      </div>
+    </div>
+  </section>
+
+  <!-- SPILL -->
+  <section class="settings-section">
+    <h2 class="settings-heading">Spill</h2>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Animasjoner</div>
+          <div class="settings-sub">Partikler, overganger og visuelle effekter i spill</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="anim-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Vis hint</div>
+          <div class="settings-sub">Tips og forklaringer i spillene</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="hint-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <label class="settings-label">Lynquiz tidsbegrensning</label>
+      <div class="seg-control" id="lq-speed">
+        <button class="seg-btn" data-val="slow">Sakte (12 s)</button>
+        <button class="seg-btn" data-val="normal">Normal (8 s)</button>
+        <button class="seg-btn" data-val="fast">Rask (5 s)</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <label class="settings-label">Studiefokus i spill</label>
+      <div class="seg-control" id="focus">
+        <button class="seg-btn" data-val="all">Alle</button>
+        <button class="seg-btn" data-val="akkusativ">Akkusativ</button>
+        <button class="seg-btn" data-val="dativ">Dativ</button>
+        <button class="seg-btn" data-val="wechsel">Wechsel</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Konfetti-effekt</div>
+          <div class="settings-sub">Fyrer av konfetti n&aring;r du skriver "confetti" i notaten</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="confetti-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- LÆRING -->
+  <section class="settings-section">
+    <h2 class="settings-heading">L&aelig;ring</h2>
+
+    <div class="settings-block">
+      <label class="settings-label">M&aring;lkarakter</label>
+      <div class="settings-sub" style="margin-bottom:.75rem;">Pr&oslash;ven beregner hva du mangler for &aring; n&aring; m&aring;let ditt.</div>
+      <div class="seg-control" id="target-grade">
+        <button class="seg-btn" data-val="3">3</button>
+        <button class="seg-btn" data-val="4">4</button>
+        <button class="seg-btn active" data-val="5">5</button>
+        <button class="seg-btn" data-val="6">6</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Vis forklaring etter svar</div>
+          <div class="settings-sub">Viser forklaring n&aring;r du svarer p&aring; &oslash;vingsoppgaver</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="explain-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Auto-neste sp&oslash;rsm&aring;l</div>
+          <div class="settings-sub">G&aring;r videre automatisk 1,5 sek etter riktig svar</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="autonext-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <label class="settings-label">Kasusfilter i &oslash;ving</label>
+      <div class="settings-sub" style="margin-bottom:.75rem;">Hvilke kasus som vises som standard i &oslash;vingsseksjonen</div>
+      <div class="seg-control" id="case-focus">
+        <button class="seg-btn" data-val="all">Alle</button>
+        <button class="seg-btn" data-val="akkusativ">Akkusativ</button>
+        <button class="seg-btn" data-val="dativ">Dativ</button>
+        <button class="seg-btn" data-val="wechsel">Wechsel</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <label class="settings-label">Standard antall sp&oslash;rsm&aring;l per &oslash;ving</label>
+      <div class="seg-control" id="default-qcount">
+        <button class="seg-btn" data-val="5">5</button>
+        <button class="seg-btn" data-val="10">10</button>
+        <button class="seg-btn" data-val="15">15</button>
+        <button class="seg-btn" data-val="20">20</button>
+        <button class="seg-btn" data-val="25">25</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <label class="settings-label">Standard vanskelighetsgrad</label>
+      <div class="seg-control" id="default-diff">
+        <button class="seg-btn" data-val="easy">Lett</button>
+        <button class="seg-btn" data-val="medium">Middels</button>
+        <button class="seg-btn" data-val="hard">Vanskelig</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Vis streak-teller</div>
+          <div class="settings-sub">Viser hvor mange riktige svar p&aring; rad du har i &oslash;vingen</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="streak-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Vis alltid riktig svar</div>
+          <div class="settings-sub">Fremhever riktig alternativ ogs&aring; n&aring;r du svarer riktig</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="showall-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLASHKORT -->
+  <section class="settings-section">
+    <h2 class="settings-heading">Flashkort</h2>
+
+    <div class="settings-block">
+      <label class="settings-label">Kortretning</label>
+      <div class="settings-sub" style="margin-bottom:.75rem;">Hvilken side vises f&oslash;rst n&aring;r du &aring;pner et kort</div>
+      <div class="seg-control" id="flash-dir">
+        <button class="seg-btn" data-val="de-no">Tysk &rarr; Norsk</button>
+        <button class="seg-btn" data-val="no-de">Norsk &rarr; Tysk</button>
+        <button class="seg-btn" data-val="random">Tilfeldig</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Bland rekkef&oslash;lge</div>
+          <div class="settings-sub">Blander kortene tilfeldig i stedet for fast rekkef&oslash;lge</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="shuffle-flash-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Vis eksempelsetninger</div>
+          <div class="settings-sub">Viser tyske eksempelsetninger p&aring; baksiden av kortet</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="flash-ex-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTATER -->
+  <section class="settings-section">
+    <h2 class="settings-heading">Notater</h2>
+
+    <div class="settings-block">
+      <label class="settings-label">Notatfarge</label>
+      <div class="settings-sub" style="margin-bottom:.75rem;">Bakgrunnsfarge p&aring; den flytende notatboken</div>
+      <div class="note-color-row" id="note-color-row">
+        <button class="note-color-btn" data-color="yellow" style="background:#FFFBE6;border-color:#E8CC30;" title="Gul"></button>
+        <button class="note-color-btn" data-color="blue"   style="background:#EFF6FF;border-color:#93C5FD;" title="Bl&aring;"></button>
+        <button class="note-color-btn" data-color="green"  style="background:#F0FDF4;border-color:#86EFAC;" title="Gr&oslash;nn"></button>
+        <button class="note-color-btn" data-color="pink"   style="background:#FFF1F2;border-color:#FDA4AF;" title="Rosa"></button>
+        <button class="note-color-btn" data-color="purple" style="background:#F5F3FF;border-color:#C4B5FD;" title="Lilla"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TILGJENGELIGHET -->
+  <section class="settings-section">
+    <h2 class="settings-heading">Tilgjengelighet</h2>
+
+    <div class="settings-block">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Dysleksi-vennlig skrift</div>
+          <div class="settings-sub">Bytter til en tydeligere font med &oslash;kt tegnmellomrom og linjeavstand</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="dyslexia-toggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <label class="settings-label">Tekststørrelse</label>
+      <div class="seg-control" id="text-size">
+        <button class="seg-btn" data-val="small">Liten</button>
+        <button class="seg-btn" data-val="normal">Normal</button>
+        <button class="seg-btn" data-val="large">Stor</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- STATISTIKK -->
+  <section class="settings-section">
+    <h2 class="settings-heading">Statistikk</h2>
+    <div class="stat-row" id="settings-stats">
+      <div class="stat-cell">
+        <div class="stat-n" id="ss-answered">0</div>
+        <div class="stat-l">Besvarte</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-n" id="ss-accuracy">—</div>
+        <div class="stat-l">Nøyaktighet</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-n" id="ss-tests">0</div>
+        <div class="stat-l">Prøver tatt</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-n" id="ss-ach">0/27</div>
+        <div class="stat-l">Prestasjoner</div>
+      </div>
+    </div>
+    <a href="achievements.html" class="btn btn-secondary btn-sm">Se alle prestasjoner &rarr;</a>
+  </section>
+
+  <!-- TILBAKESTILL -->
+  <section class="settings-section danger-section">
+    <h2 class="settings-heading">Faresone</h2>
+    <div class="settings-block">
+      <div class="settings-row" style="align-items:flex-start;">
+        <div>
+          <div class="settings-label">Tilbakestill all fremgang</div>
+          <div class="settings-sub">Sletter all øvingshistorikk, prøveresultater og prestasjoner. Kan ikke angres.</div>
+        </div>
+        <button class="btn btn-danger btn-sm" id="reset-all-btn">Tilbakestill</button>
+      </div>
+    </div>
+    <div class="settings-block">
+      <div class="settings-row" style="align-items:flex-start;">
+        <div>
+          <div class="settings-label">Tilbakestill innstillinger</div>
+          <div class="settings-sub">Gjenoppretter standard tema, lyd og spillpreferanser.</div>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="reset-settings-btn">Gjenopprett</button>
+      </div>
+    </div>
+  </section>
+
+  <footer style="text-align:center;padding:2.5rem 0 .5rem;color:var(--text3);font-size:.8125rem;">
+    Lagd av <a href="https://www.tiktok.com/@jx.ffx" target="_blank" rel="noopener" style="color:var(--text2);font-weight:600;">William</a>
+  </footer>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/achievements.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  Settings.load();
+  const s = Settings.getAll();
+
+  // ── Theme cards ────────────────────────────────────────────
+  document.querySelectorAll(".theme-card").forEach(c => {
+    if (c.dataset.theme === s.theme) c.classList.add("active");
+    c.addEventListener("click", () => {
+      document.querySelectorAll(".theme-card").forEach(x => x.classList.remove("active"));
+      c.classList.add("active");
+      Settings.set("theme", c.dataset.theme);
+    });
+  });
+
+  // ── Volume slider ──────────────────────────────────────────
+  const volSlider = document.getElementById("vol-slider");
+  const volLabel  = document.getElementById("vol-label");
+  volSlider.value = Math.round(s.volume * 100);
+  volLabel.textContent = Math.round(s.volume * 100) + "%";
+  volSlider.addEventListener("input", () => {
+    const v = volSlider.value / 100;
+    volLabel.textContent = Math.round(v * 100) + "%";
+    Settings.set("volume", v);
+    AudioEngine.init(); AudioEngine.play("pop");
+  });
+
+  // ── Segmented controls ─────────────────────────────────────
+  function initSeg(id, key) {
+    const container = document.getElementById(id);
+    if (!container) return;
+    const cur = String(Settings.get(key) ?? "");
+    container.querySelectorAll(".seg-btn").forEach(x => x.classList.remove("active"));
+    container.querySelectorAll(".seg-btn").forEach(b => {
+      if (b.dataset.val === cur) b.classList.add("active");
+      b.addEventListener("click", () => {
+        container.querySelectorAll(".seg-btn").forEach(x => x.classList.remove("active"));
+        b.classList.add("active");
+        Settings.set(key, b.dataset.val);
+      });
+    });
+  }
+  initSeg("lq-speed",       "lqTimerSpeed");
+  initSeg("focus",          "studyFocus");
+  initSeg("target-grade",   "targetGrade");
+  initSeg("text-size",      "textSize");
+  initSeg("case-focus",     "caseFocus");
+  initSeg("default-qcount", "defaultQCount");
+  initSeg("default-diff",   "defaultDiff");
+  initSeg("flash-dir",      "flashDir");
+
+  // ── Toggle helpers ─────────────────────────────────────────
+  function tog(id, key) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.checked = s[key] === true;
+    el.addEventListener("change", () => Settings.set(key, el.checked));
+  }
+  function animTog() {
+    const el = document.getElementById("anim-toggle");
+    el.checked = s.animations === "full";
+    el.addEventListener("change", () => Settings.set("animations", el.checked ? "full" : "off"));
+  }
+
+  tog("snd-toggle",           "sound");
+  animTog();
+  tog("hint-toggle",          "showHints");
+  tog("explain-toggle",       "showExplanation");
+  tog("autonext-toggle",      "autoNext");
+  tog("dyslexia-toggle",      "dyslexiaFont");
+  tog("compact-toggle",       "compactView");
+  tog("contrast-toggle",      "highContrast");
+  tog("confetti-toggle",      "confettiEnabled");
+  tog("streak-toggle",        "showStreak");
+  tog("showall-toggle",       "alwaysShowAnswer");
+  tog("shuffle-flash-toggle", "shuffleFlash");
+  tog("flash-ex-toggle",      "showFlashEx");
+
+  // ── Note color swatches ────────────────────────────────────
+  const NOTE_COLORS = {
+    yellow: { bg:"#FFFBE6", bd:"#E8CC30", text:"#2A2000", title:"#7A6200" },
+    blue:   { bg:"#EFF6FF", bd:"#93C5FD", text:"#0C2340", title:"#1E40AF" },
+    green:  { bg:"#F0FDF4", bd:"#86EFAC", text:"#052E10", title:"#15803D" },
+    pink:   { bg:"#FFF1F2", bd:"#FDA4AF", text:"#3B0010", title:"#BE123C" },
+    purple: { bg:"#F5F3FF", bd:"#C4B5FD", text:"#1E0050", title:"#6D28D9" },
+  };
+  function applyNoteColor(color) {
+    const c = NOTE_COLORS[color] || NOTE_COLORS.yellow;
+    const n = document.getElementById("sticky-note");
+    if (!n) return;
+    n.style.background  = c.bg;
+    n.style.borderColor = c.bd;
+    const hdr = document.getElementById("sticky-header");
+    if (hdr) hdr.style.borderBottomColor = c.bd;
+    const body = document.getElementById("sticky-body");
+    if (body) body.style.color = c.text;
+    const title = document.getElementById("sticky-title");
+    if (title) title.style.color = c.title;
+    const tgl = document.getElementById("sticky-toggle");
+    if (tgl) tgl.style.color = c.title;
+  }
+  const noteRow = document.getElementById("note-color-row");
+  noteRow.querySelectorAll(".note-color-btn").forEach(btn => {
+    if (btn.dataset.color === s.noteColor) btn.classList.add("active");
+    btn.addEventListener("click", () => {
+      noteRow.querySelectorAll(".note-color-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      Settings.set("noteColor", btn.dataset.color);
+      applyNoteColor(btn.dataset.color);
+    });
+  });
+  applyNoteColor(s.noteColor);
+
+  // ── Stats ──────────────────────────────────────────────────
+  const prog = Progress.get();
+  document.getElementById("ss-answered").textContent = prog.totalAnswered;
+  document.getElementById("ss-tests").textContent    = prog.testsTaken;
+  if (prog.totalAnswered > 0) {
+    const pct = Math.round(prog.totalCorrect / prog.totalAnswered * 100);
+    document.getElementById("ss-accuracy").textContent = pct + "%";
+  }
+  const unlocked = Object.keys(Achievements.getUnlocked()).length;
+  document.getElementById("ss-ach").textContent = unlocked + "/27";
+
+  // ── Reset buttons ──────────────────────────────────────────
+  document.getElementById("reset-all-btn").addEventListener("click", () => {
+    if (confirm("Er du sikker? All fremgang og alle prestasjoner slettes permanent.")) {
+      Progress.reset();
+      localStorage.removeItem("tp_achievements");
+      ["g1_hi","g2_hi","g3_hi","g4_hi","g5_hi"].forEach(k => localStorage.removeItem(k));
+      showToast("All fremgang tilbakestilt");
+      location.reload();
+    }
+  });
+  document.getElementById("reset-settings-btn").addEventListener("click", () => {
+    Settings.reset();
+    showToast("Innstillinger gjenopprettet");
+    location.reload();
+  });
+});
+</script>
+</body>
+</html>

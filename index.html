@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tyske Preposisjoner</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="page">
+
+  <header class="page-header">
+    <div class="page-header-eyebrow">
+      <span class="flag-bar"><span class="f1"></span><span class="f2"></span><span class="f3"></span></span>
+      <span>Deutsch &middot; 10. klasse</span>
+    </div>
+    <h1>Tyske Preposisjoner</h1>
+    <p>Lær kasusgruppene, &oslash;v med varierte oppgaver og test deg selv til prøven.</p>
+  </header>
+
+  <div class="card-grid" style="margin-bottom:2.5rem;">
+    <a class="grid-card" href="learn.html">
+      <span class="grid-card-label">01 &ndash; Teori</span>
+      <h3>Lær</h3>
+      <p>Preposisjonstabeller, artikkelbøying og husketips.</p>
+    </a>
+    <a class="grid-card" href="practice.html">
+      <span class="grid-card-label">02 &ndash; &Oslash;ving</span>
+      <h3>&Oslash;v</h3>
+      <p>8 oppgavetyper inkl. artikkelbøying, 3 vanskelighetsgrader.</p>
+    </a>
+    <a class="grid-card" href="test.html">
+      <span class="grid-card-label">03 &ndash; Prøve</span>
+      <h3>Prøvemodus</h3>
+      <p>Simuler en ekte prøve med tidtaker og automatisk retting.</p>
+    </a>
+    <a class="grid-card" href="progress.html">
+      <span class="grid-card-label">04 &ndash; Statistikk</span>
+      <h3>Fremgang</h3>
+      <p>Følg med på fremgang og prøveresultater.</p>
+    </a>
+    <a class="grid-card" href="game.html">
+      <span class="grid-card-label">05 &ndash; Spill</span>
+      <h3>Spillsenter</h3>
+      <p>5 ulike spill: skytespill, quiz, memory, fangst og skriveduell.</p>
+    </a>
+    <a class="grid-card" href="flashkort.html">
+      <span class="grid-card-label">06 &ndash; Flashkort</span>
+      <h3>Flashkort</h3>
+      <p>Bla gjennom preposisjonene ett om gangen. Sorter kjente og ukjente.</p>
+    </a>
+    <a class="grid-card" href="ordliste.html">
+      <span class="grid-card-label">07 &ndash; Ordliste</span>
+      <h3>Ordliste</h3>
+      <p>Komplett oversikt med søk, kasus og eksempelsetninger.</p>
+    </a>
+    <a class="grid-card" href="achievements.html">
+      <span class="grid-card-label">08 &ndash; Prestasjoner</span>
+      <h3>Prestasjoner</h3>
+      <p id="ach-home-count">L&aring;s opp alle 27 prestasjoner ved &aring; &oslash;ve og spille.</p>
+    </a>
+  </div>
+
+  <!-- 3 case groups -->
+  <div class="section">
+    <div class="section-head"><h2>Kasusgrupper</h2></div>
+
+    <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1.75rem;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0;background:var(--border);">
+        <div style="background:var(--surface);padding:1.25rem 1.5rem;">
+          <span class="case-chip chip-akk" style="margin-bottom:.6rem;display:inline-block;">Akkusativ</span>
+          <p style="font-size:.875rem;color:var(--text2);margin-bottom:.65rem;">Styrer alltid akkusativ kasus.</p>
+          <p style="font-size:.8125rem;font-weight:600;color:var(--text);">durch &middot; für &middot; gegen &middot; ohne &middot; um</p>
+        </div>
+        <div style="background:var(--surface);padding:1.25rem 1.5rem;">
+          <span class="case-chip chip-dat" style="margin-bottom:.6rem;display:inline-block;">Dativ</span>
+          <p style="font-size:.875rem;color:var(--text2);margin-bottom:.65rem;">Styrer alltid dativ kasus.</p>
+          <p style="font-size:.8125rem;font-weight:600;color:var(--text);">aus &middot; bei &middot; mit &middot; nach &middot; seit &middot; von &middot; zu &middot; außer &middot; gegenüber &middot; ab</p>
+        </div>
+        <div style="background:var(--surface);padding:1.25rem 1.5rem;">
+          <span class="case-chip chip-wex" style="margin-bottom:.6rem;display:inline-block;">Wechsel</span>
+          <p style="font-size:.875rem;color:var(--text2);margin-bottom:.65rem;">Akkusativ ved bevegelse (Wohin?), dativ ved sted (Wo?).</p>
+          <p style="font-size:.8125rem;font-weight:600;color:var(--text);">an &middot; auf &middot; hinter &middot; in &middot; neben &middot; über &middot; unter &middot; vor &middot; zwischen</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wechsel rule -->
+    <div class="two-col-rule" style="margin-bottom:1.75rem;">
+      <div class="rule-col akk">
+        <h4>Akkusativ, Wohin? (Hvor hen?)</h4>
+        <p>Bevegelse mot eller inn i et sted.</p>
+        <em>Ich gehe <u>in die</u> Schule.</em>
+        <em>Er legt das Buch <u>auf den</u> Tisch.</em>
+      </div>
+      <div class="rule-col dat">
+        <h4>Dativ, Wo? (Hvor?)</h4>
+        <p>Ro, befinner seg et sted.</p>
+        <em>Ich bin <u>in der</u> Schule.</em>
+        <em>Das Buch liegt <u>auf dem</u> Tisch.</em>
+      </div>
+    </div>
+
+    <!-- Article table teaser -->
+    <div class="section-head"><h2>Bestemt artikkel, bøyning</h2></div>
+    <p class="muted" style="margin-bottom:1rem;font-size:.875rem;">
+      Kun maskulin forandrer seg i akkusativ. I dativ forandrer alle seg.
+    </p>
+
+    <div id="article-table-home"></div>
+
+    <div class="btn-row" style="margin-top:1.25rem;">
+      <a class="btn btn-primary btn-lg" href="learn.html">Se full læreoversikt &rarr;</a>
+      <a class="btn btn-secondary btn-lg" href="practice.html">Start øving &rarr;</a>
+    </div>
+  </div>
+
+</div>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/achievements.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("article-table-home").innerHTML = buildArticleTable();
+  // Show achievement count on home card
+  const unlocked = Object.keys(Achievements.getUnlocked()).length;
+  if (unlocked > 0) {
+    document.getElementById("ach-home-count").textContent = unlocked + " / 27 prestasjoner låst opp.";
+  }
+});
+
+function buildArticleTable() {
+  return `
+    <div class="table-wrap card" style="padding:0;overflow:hidden;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Kasus</th>
+            <th style="color:var(--akk)">Maskulin</th>
+            <th>Feminin</th>
+            <th>Nøytrum</th>
+            <th>Plural</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${ARTICLE_TABLE.rows.map(r => `
+            <tr>
+              <td style="font-weight:700;font-size:.8125rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);">${r.kasus}</td>
+              <td style="${r.changed.includes('mask') ? 'font-weight:800;color:var(--akk);' : ''}">${r.mask}</td>
+              <td style="${r.changed.includes('fem')  ? 'font-weight:800;color:var(--dat);' : ''}">${r.fem}</td>
+              <td style="${r.changed.includes('nøyt') ? 'font-weight:800;color:var(--dat);' : ''}">${r.nøyt}</td>
+              <td style="${r.changed.includes('pl')   ? 'font-weight:800;color:var(--dat);' : ''}">${r.pl}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Øv &ndash; Tyske Preposisjoner</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="page">
+
+  <header class="page-header">
+    <div class="page-header-eyebrow">
+      <span class="flag-bar"><span class="f1"></span><span class="f2"></span><span class="f3"></span></span>
+      <span>&Oslash;ving</span>
+    </div>
+    <h1>&Oslash;vingsseksjon</h1>
+    <p>Velg oppgavetype og vanskelighetsgrad. Alle resultater lagres automatisk.</p>
+  </header>
+
+  <!-- Chooser -->
+  <div id="exercise-chooser">
+
+    <!-- Random -->
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.75rem;">
+      <div>
+        <p style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:.3rem;">Snarvei</p>
+        <p style="font-weight:600;margin-bottom:.15rem;">Tilfeldig &oslash;ving</p>
+        <p class="small muted">Blander alle oppgavetyper og vanskelighetsgrader.</p>
+      </div>
+      <button class="btn btn-primary" id="random-btn">Start tilfeldig &rarr;</button>
+    </div>
+
+    <!-- Case filter -->
+    <div class="card" style="margin-bottom:1.75rem;padding:1rem 1.25rem;">
+      <p style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:.75rem;">Kasusfilter</p>
+      <div class="seg-control" id="case-filter">
+        <button class="seg-btn active" data-val="alle">Alle</button>
+        <button class="seg-btn" data-val="akkusativ">Akkusativ</button>
+        <button class="seg-btn" data-val="dativ">Dativ</button>
+        <button class="seg-btn" data-val="wechsel">Wechsel</button>
+      </div>
+    </div>
+
+    <!-- Exercise list -->
+    <div class="section-head"><h2>Velg oppgavetype</h2></div>
+
+    <div class="ex-type-list">
+
+      <div class="ex-type-row" data-exercise-type="multipleChoice">
+        <span class="ex-type-num">1</span>
+        <div class="ex-type-info">
+          <h3>Flervalg</h3>
+          <p>Velg riktig preposisjon fra fire alternativer (A&ndash;D).</p>
+        </div>
+        <div class="ex-type-controls">
+          <div class="diff-row" style="margin:0;">
+            <button class="diff-btn active" data-diff="easy">Lett</button>
+            <button class="diff-btn" data-diff="medium">Middels</button>
+            <button class="diff-btn" data-diff="hard">Vanskelig</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="startFromRow(this, 'multipleChoice')">Start &rarr;</button>
+        </div>
+      </div>
+
+      <div class="ex-type-row" data-exercise-type="fillInBlank">
+        <span class="ex-type-num">2</span>
+        <div class="ex-type-info">
+          <h3>Fyll inn preposisjon</h3>
+          <p>Skriv inn riktig preposisjon med hint oppgitt.</p>
+        </div>
+        <div class="ex-type-controls">
+          <div class="diff-row" style="margin:0;">
+            <button class="diff-btn active" data-diff="easy">Lett</button>
+            <button class="diff-btn" data-diff="medium">Middels</button>
+            <button class="diff-btn" data-diff="hard">Vanskelig</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="startFromRow(this, 'fillInBlank')">Start &rarr;</button>
+        </div>
+      </div>
+
+      <div class="ex-type-row" data-exercise-type="chooseCase">
+        <span class="ex-type-num">3</span>
+        <div class="ex-type-info">
+          <h3>Velg kasus</h3>
+          <p>Avgjør om preposisjonen tar akkusativ eller dativ i konteksten.</p>
+        </div>
+        <div class="ex-type-controls">
+          <div class="diff-row" style="margin:0;">
+            <button class="diff-btn active" data-diff="easy">Lett</button>
+            <button class="diff-btn" data-diff="medium">Middels</button>
+            <button class="diff-btn" data-diff="hard">Vanskelig</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="startFromRow(this, 'chooseCase')">Start &rarr;</button>
+        </div>
+      </div>
+
+      <div class="ex-type-row" data-exercise-type="trueOrFalse">
+        <span class="ex-type-num">4</span>
+        <div class="ex-type-info">
+          <h3>Sant eller usant</h3>
+          <p>Er p&aring;standen om preposisjonen korrekt eller feil?</p>
+        </div>
+        <div class="ex-type-controls">
+          <div class="diff-row" style="margin:0;">
+            <button class="diff-btn active" data-diff="easy">Lett</button>
+            <button class="diff-btn" data-diff="medium">Middels</button>
+            <button class="diff-btn" data-diff="hard">Vanskelig</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="startFromRow(this, 'trueOrFalse')">Start &rarr;</button>
+        </div>
+      </div>
+
+      <div class="ex-type-row" data-exercise-type="writeIn">
+        <span class="ex-type-num">5</span>
+        <div class="ex-type-info">
+          <h3>Skriv inn selv</h3>
+          <p>Skriv riktig preposisjon uten valgalternativer. Kun et kort hint gis.</p>
+        </div>
+        <div class="ex-type-controls">
+          <div class="diff-row" style="margin:0;">
+            <button class="diff-btn active" data-diff="easy">Lett</button>
+            <button class="diff-btn" data-diff="medium">Middels</button>
+            <button class="diff-btn" data-diff="hard">Vanskelig</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="startFromRow(this, 'writeIn')">Start &rarr;</button>
+        </div>
+      </div>
+
+      <div class="ex-type-row" data-exercise-type="match">
+        <span class="ex-type-num">6</span>
+        <div class="ex-type-info">
+          <h3>Koble preposisjon til betydning</h3>
+          <p>Klikk for &aring; matche preposisjonene med norsk oversettelse.</p>
+        </div>
+        <div class="ex-type-controls">
+          <div class="diff-row" style="margin:0;">
+            <button class="diff-btn active" data-diff="easy">Lett</button>
+            <button class="diff-btn" data-diff="medium">Middels</button>
+            <button class="diff-btn" data-diff="hard">Vanskelig</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="startFromRow(this, 'match')">Start &rarr;</button>
+        </div>
+      </div>
+
+      <div class="ex-type-row" data-exercise-type="articleChoice">
+        <span class="ex-type-num">7</span>
+        <div class="ex-type-info">
+          <h3>Artikkelbøying (flervalg)</h3>
+          <p>Velg riktig bestemt artikkel (den/die/das/dem/der) i akkusativ og dativ.</p>
+        </div>
+        <div class="ex-type-controls">
+          <div class="diff-row" style="margin:0;">
+            <button class="diff-btn active" data-diff="easy">Lett</button>
+            <button class="diff-btn" data-diff="medium">Middels</button>
+            <button class="diff-btn" data-diff="hard">Vanskelig</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="startFromRow(this, 'articleChoice')">Start &rarr;</button>
+        </div>
+      </div>
+
+      <div class="ex-type-row" data-exercise-type="articleWrite">
+        <span class="ex-type-num">8</span>
+        <div class="ex-type-info">
+          <h3>Artikkelbøying (skriv inn)</h3>
+          <p>Skriv riktig bestemt artikkel uten valgalternativer.</p>
+        </div>
+        <div class="ex-type-controls">
+          <div class="diff-row" style="margin:0;">
+            <button class="diff-btn active" data-diff="easy">Lett</button>
+            <button class="diff-btn" data-diff="medium">Middels</button>
+            <button class="diff-btn" data-diff="hard">Vanskelig</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="startFromRow(this, 'articleWrite')">Start &rarr;</button>
+        </div>
+      </div>
+
+    </div><!-- /ex-type-list -->
+  </div><!-- /chooser -->
+
+  <!-- Exercise area -->
+  <div id="exercise-area" class="hidden"></div>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/achievements.js"></script>
+<script src="js/practice.js"></script>
+<script>
+function startFromRow(btn, type) {
+  const row = btn.closest("[data-exercise-type]");
+  const active = row.querySelector(".diff-btn.active");
+  startExercise(type, active ? active.dataset.diff : "easy");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("[data-exercise-type]").forEach(row => {
+    row.querySelectorAll(".diff-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        row.querySelectorAll(".diff-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>

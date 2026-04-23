@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spill &ndash; Tyske Preposisjoner</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="page">
+
+  <header class="page-header">
+    <div class="page-header-eyebrow">
+      <span class="flag-bar"><span class="f1"></span><span class="f2"></span><span class="f3"></span></span>
+      <span>Spill</span>
+    </div>
+    <h1>Spillsenter</h1>
+    <p>Sju ulike spill for &aring; &oslash;ve p&aring; tyske preposisjoner.</p>
+  </header>
+
+  <!-- ── HUB ──────────────────────────────────────────────────── -->
+  <div id="game-hub">
+    <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(195px,1fr));margin-bottom:2rem;">
+
+      <div class="grid-card game-select-card" data-game="invaders">
+        <span class="grid-card-label">01, Skytespill</span>
+        <h3>Grammatikkforsvar</h3>
+        <p>Space Invaders med preposisjoner. Skyt riktig svar, unng&aring; fiendens kuler, og overlem sjefen.</p>
+      </div>
+
+      <div class="grid-card game-select-card" data-game="lynquiz">
+        <span class="grid-card-label">02, Fart</span>
+        <h3>Lynquiz</h3>
+        <p>20 sp&oslash;rsm&aring;l med nedtelling. Bygg opp multiplier og pr&oslash;v "Dobbelt eller ingenting".</p>
+      </div>
+
+      <div class="grid-card game-select-card" data-game="kortmatch">
+        <span class="grid-card-label">03, Hukommelse</span>
+        <h3>Kortmatch</h3>
+        <p>Memory med preposisjoner. Forhåndsvisning, røntgen-knapp, og stjernekarakter på slutten.</p>
+      </div>
+
+      <div class="grid-card game-select-card" data-game="ordregn">
+        <span class="grid-card-label">04, Refleks</span>
+        <h3>Ordregn</h3>
+        <p>Fang riktig ord med kurven. Vind, power-ups og kombo-system gj&oslash;r det uforutsigbart.</p>
+      </div>
+
+      <div class="grid-card game-select-card" data-game="skriveduell">
+        <span class="grid-card-label">05, Skriving</span>
+        <h3>Skriveduell</h3>
+        <p>L&oslash;p mot CPU-en p&aring; en racerbane. Skriv riktig preposisjon raskere enn motstanderen.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PLAY AREA ─────────────────────────────────────────────── -->
+  <div id="game-play" style="display:none;">
+
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
+      <button id="back-btn" class="btn btn-secondary btn-sm">&larr; Tilbake</button>
+      <span id="game-title" style="font-weight:700;font-size:1rem;color:var(--text2);"></span>
+    </div>
+
+    <div class="game-wrapper">
+
+      <div class="game-canvas-wrap">
+        <canvas id="game-canvas" width="640" height="380"></canvas>
+      </div>
+
+      <!-- Question card (shown by default, hidden by some games) -->
+      <div class="game-question-card" id="game-qcard">
+        <span class="game-question-label">Sett inn riktig preposisjon</span>
+        <p id="question-text"></p>
+        <p id="question-tip"></p>
+        <p id="question-explain"></p>
+      </div>
+
+      <!-- X-ray button for Kortmatch -->
+      <div id="xray-btn-wrap" style="max-width:640px;width:100%;display:flex;justify-content:flex-end;padding:.4rem 0;">
+        <button id="xray-btn" style="display:none;" class="btn btn-secondary btn-sm">🔍 Røntgen (se alle)</button>
+      </div>
+
+      <!-- Text input (Skriveduell) -->
+      <div id="game-input-wrap" style="display:none;" class="game-question-card">
+        <div style="display:flex;gap:.5rem;align-items:center;">
+          <input id="game-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+            placeholder="Skriv inn svaret ditt..."
+            style="flex:1;padding:.6rem .8rem;font-size:1rem;font-family:inherit;border:1.5px solid var(--border);border-radius:var(--r-sm);background:var(--surface2);color:var(--text);outline:none;" />
+          <button id="game-input-submit" class="btn btn-primary btn-sm">Svar &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Touch controls: Space Invaders -->
+      <div id="game-touch" class="game-touch-controls" style="display:none;">
+        <button id="ctrl-left"  class="ctrl-btn" aria-label="Venstre">&#8592;</button>
+        <button id="ctrl-shoot" class="ctrl-btn ctrl-shoot-btn" aria-label="Skyt">SKYT</button>
+        <button id="ctrl-right" class="ctrl-btn" aria-label="H&oslash;yre">&#8594;</button>
+      </div>
+
+      <!-- Touch controls: Word Catcher -->
+      <div id="game-catch-touch" class="game-touch-controls" style="display:none;">
+        <button id="catch-left"  class="ctrl-btn" style="max-width:220px;" aria-label="Venstre">&#8592; Venstre</button>
+        <button id="catch-right" class="ctrl-btn" style="max-width:220px;" aria-label="H&oslash;yre">H&oslash;yre &#8594;</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/achievements.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ordliste &ndash; Tyske Preposisjoner</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Search bar ─────────────────────────────────────────────── */
+    .search-wrap {
+      margin-bottom: 2rem;
+    }
+
+    .search-input {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      padding: 0.55rem 0.9rem;
+      font-size: 0.9375rem;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .search-input::placeholder { color: var(--text3); }
+    .search-input:focus {
+      border-color: var(--text2);
+      box-shadow: 0 0 0 3px rgba(0,0,0,.06);
+    }
+
+    /* ── Stats bar ──────────────────────────────────────────────── */
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 1rem;
+      font-size: 0.8125rem;
+      color: var(--text2);
+      margin-bottom: 2rem;
+    }
+    .stats-bar .stats-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--border);
+      display: inline-block;
+    }
+    .stats-bar strong { color: var(--text); }
+
+    /* ── Quick-jump bar ─────────────────────────────────────────── */
+    .jump-bar {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.25rem;
+    }
+    .jump-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--text2);
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color .12s, color .12s, background .12s;
+      letter-spacing: 0.02em;
+    }
+    .jump-btn:hover { color: var(--text); background: var(--surface2); text-decoration: none; }
+    .jump-btn .jump-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .jump-btn.akk .jump-dot { background: var(--akk); }
+    .jump-btn.dat .jump-dot { background: var(--dat); }
+    .jump-btn.wex .jump-dot { background: var(--wex); }
+
+    /* ── Section anchor offset (account for fixed nav) ──────────── */
+    .section-anchor {
+      display: block;
+      height: calc(var(--nav-h) + 1.5rem);
+      margin-top: calc(-1 * (var(--nav-h) + 1.5rem));
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* ── Section header band ────────────────────────────────────── */
+    .ordliste-section-head {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.1rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--border);
+    }
+    .ordliste-section-head.akk { background: var(--akk-bg); border-color: var(--akk-bd); }
+    .ordliste-section-head.dat { background: var(--dat-bg); border-color: var(--dat-bd); }
+    .ordliste-section-head.wex { background: var(--wex-bg); border-color: var(--wex-bd); }
+
+    .ordliste-section-head h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+    .ordliste-section-head .sh-count {
+      margin-left: auto;
+      font-size: 0.75rem;
+      color: var(--text3);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* ── Copy button ────────────────────────────────────────────── */
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 0.2rem 0.45rem;
+      font-size: 0.7rem;
+      color: var(--text3);
+      cursor: pointer;
+      line-height: 1;
+      font-family: inherit;
+      transition: border-color .12s, color .12s, background .12s;
+      vertical-align: middle;
+      margin-left: 0.4rem;
+      flex-shrink: 0;
+    }
+    .copy-btn:hover { border-color: var(--text2); color: var(--text); background: var(--surface2); }
+    .copy-btn.copied {
+      border-color: var(--dat-bd);
+      color: var(--dat);
+      background: var(--dat-bg);
+    }
+
+    .td-word-wrap {
+      display: flex;
+      align-items: center;
+    }
+
+    /* ── No-results message ─────────────────────────────────────── */
+    .no-results {
+      display: none;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text3);
+    }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .hide-mobile { display: none !important; }
+      .search-input { max-width: 100%; }
+      .stats-bar { gap: 0.35rem 0.65rem; font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="page">
+
+  <!-- ── Page header ──────────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="page-header-eyebrow">
+      <span class="flag-bar"><span class="f1"></span><span class="f2"></span><span class="f3"></span></span>
+      <span>Ordliste</span>
+    </div>
+    <h1>Ordliste</h1>
+    <p>Komplett oversikt over alle tyske preposisjoner med betydning, kasus og eksempler.</p>
+  </header>
+
+  <!-- ── Stats bar ────────────────────────────────────────────── -->
+  <div class="stats-bar" id="stats-bar">
+    <!-- filled by JS -->
+  </div>
+
+  <!-- ── Search + quick jump ──────────────────────────────────── -->
+  <div class="search-wrap">
+    <input
+      class="search-input"
+      type="text"
+      id="search-input"
+      placeholder="S&#248;k etter preposisjon&#8230;"
+      autocomplete="off"
+      spellcheck="false"
+      oninput="filterTables(this.value)"
+    />
+  </div>
+
+  <nav class="jump-bar" aria-label="Hopp til seksjon">
+    <a class="jump-btn akk" href="#seksjon-akkusativ">
+      <span class="jump-dot"></span>Akkusativ
+    </a>
+    <a class="jump-btn dat" href="#seksjon-dativ">
+      <span class="jump-dot"></span>Dativ
+    </a>
+    <a class="jump-btn wex" href="#seksjon-wechsel">
+      <span class="jump-dot"></span>Wechsel
+    </a>
+    <a class="jump-btn" href="#seksjon-verb" style="--dot-c:#6B6B70;">
+      <span class="jump-dot" style="background:#6B6B70;"></span>Verb + prep.
+    </a>
+    <a class="jump-btn" href="#seksjon-fraser" style="--dot-c:#6B6B70;">
+      <span class="jump-dot" style="background:#6B6B70;"></span>Faste fraser
+    </a>
+    <a class="jump-btn" href="#seksjon-adj" style="--dot-c:#6B6B70;">
+      <span class="jump-dot" style="background:#6B6B70;"></span>Adjektiver + prep.
+    </a>
+    <a class="jump-btn" href="#seksjon-tid" style="--dot-c:#6B6B70;">
+      <span class="jump-dot" style="background:#6B6B70;"></span>Tidsuttrykk
+    </a>
+  </nav>
+
+  <!-- ── Tables rendered by JS ────────────────────────────────── -->
+  <div id="ordliste-content"></div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       Seksjon 4: Vanlige verb med preposisjoner
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section" id="seksjon-verb-wrap">
+    <span class="section-anchor" id="seksjon-verb"></span>
+
+    <div class="ordliste-section-head" style="background:var(--surface2);border-color:var(--border);">
+      <span class="case-chip" style="color:var(--text2);background:var(--surface);border-color:var(--border);">Verb</span>
+      <h2>Vanlige verb med preposisjoner</h2>
+      <span class="sh-count">18 verb</span>
+    </div>
+
+    <div class="table-wrap card" style="padding:0;overflow:hidden;margin-bottom:2.5rem;">
+      <table class="data-table" id="verb-table">
+        <thead>
+          <tr>
+            <th>Verb (tysk)</th>
+            <th>Norsk</th>
+            <th>Eksempel</th>
+            <th class="hide-mobile">Preposisjon</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="td-word">warten auf</span></td>
+            <td>vente på</td>
+            <td><span class="td-example">Ich warte auf den Bus.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">auf + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">denken an</span></td>
+            <td>tenke på</td>
+            <td><span class="td-example">Ich denke oft an dich.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">an + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">sprechen über</span></td>
+            <td>snakke om</td>
+            <td><span class="td-example">Wir sprechen über das Problem.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">über + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">sich freuen auf</span></td>
+            <td>glede seg til</td>
+            <td><span class="td-example">Ich freue mich auf die Ferien.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">auf + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">sich freuen über</span></td>
+            <td>glede seg over</td>
+            <td><span class="td-example">Er freut sich über das Geschenk.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">über + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">sich interessieren für</span></td>
+            <td>interessere seg for</td>
+            <td><span class="td-example">Sie interessiert sich für Musik.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">für + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">träumen von</span></td>
+            <td>drømme om</td>
+            <td><span class="td-example">Er träumt von einer Reise.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">von + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">fragen nach</span></td>
+            <td>spørre om / etter</td>
+            <td><span class="td-example">Sie fragt nach dem Weg.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">nach + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">sich erinnern an</span></td>
+            <td>huske / minnes</td>
+            <td><span class="td-example">Ich erinnere mich an den Urlaub.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">an + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">gehören zu</span></td>
+            <td>høre til / tilhøre</td>
+            <td><span class="td-example">Das Buch gehört zu meiner Sammlung.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">zu + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">bitten um</span></td>
+            <td>be om</td>
+            <td><span class="td-example">Ich bitte dich um Hilfe.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">um + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">schreiben an</span></td>
+            <td>skrive til</td>
+            <td><span class="td-example">Sie schreibt einen Brief an ihre Freundin.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">an + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">kämpfen gegen</span></td>
+            <td>kjempe mot</td>
+            <td><span class="td-example">Sie kämpfen gegen die Ungerechtigkeit.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">gegen + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">arbeiten bei</span></td>
+            <td>jobbe hos / ved</td>
+            <td><span class="td-example">Er arbeitet bei einer Bank.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">bei + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">kommen aus</span></td>
+            <td>komme fra</td>
+            <td><span class="td-example">Sie kommt aus Norwegen.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">aus + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">fahren mit</span></td>
+            <td>reise med</td>
+            <td><span class="td-example">Wir fahren mit dem Zug nach Berlin.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">mit + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">abhängen von</span></td>
+            <td>avhenge av</td>
+            <td><span class="td-example">Das hängt von dir ab.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">von + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">sich gewöhnen an</span></td>
+            <td>venne seg til</td>
+            <td><span class="td-example">Man gewöhnt sich schnell daran.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">an + Akk.</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="no-results" id="no-results-verb">Ingen verb samsvarer med søket.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       Seksjon 5: Vanlige faste fraser
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section" id="seksjon-fraser-wrap">
+    <span class="section-anchor" id="seksjon-fraser"></span>
+
+    <div class="ordliste-section-head" style="background:var(--surface2);border-color:var(--border);">
+      <span class="case-chip" style="color:var(--text2);background:var(--surface);border-color:var(--border);">Fraser</span>
+      <h2>Vanlige faste fraser</h2>
+      <span class="sh-count">14 fraser</span>
+    </div>
+
+    <div class="table-wrap card" style="padding:0;overflow:hidden;margin-bottom:2.5rem;">
+      <table class="data-table" id="fraser-table">
+        <thead>
+          <tr>
+            <th>Tysk uttrykk</th>
+            <th>Norsk</th>
+            <th class="hide-mobile">Eksempel</th>
+            <th class="hide-mobile">Preposisjon</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="td-word">nach Hause</span></td>
+            <td>hjem (bevegelse)</td>
+            <td class="hide-mobile"><span class="td-example">Ich gehe nach Hause.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">nach + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">zu Hause</span></td>
+            <td>hjemme (sted/ro)</td>
+            <td class="hide-mobile"><span class="td-example">Ich bin zu Hause.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">zu + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">aus Versehen</span></td>
+            <td>ved et uhell / ved en feiltakelse</td>
+            <td class="hide-mobile"><span class="td-example">Ich habe das aus Versehen gemacht.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">aus + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">im Grunde</span></td>
+            <td>egentlig / i bunn og grunn</td>
+            <td class="hide-mobile"><span class="td-example">Im Grunde hat er recht.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">in + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">von Zeit zu Zeit</span></td>
+            <td>fra tid til annen</td>
+            <td class="hide-mobile"><span class="td-example">Von Zeit zu Zeit besuche ich sie.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">von + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">auf jeden Fall</span></td>
+            <td>i alle fall / absolutt</td>
+            <td class="hide-mobile"><span class="td-example">Auf jeden Fall komme ich mit.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">auf + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">in der Regel</span></td>
+            <td>som regel / vanligvis</td>
+            <td class="hide-mobile"><span class="td-example">In der Regel stehe ich um 7 Uhr auf.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">in + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">mit Absicht</span></td>
+            <td>med vilje</td>
+            <td class="hide-mobile"><span class="td-example">Er hat das mit Absicht gesagt.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">mit + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">ohne Zweifel</span></td>
+            <td>uten tvil</td>
+            <td class="hide-mobile"><span class="td-example">Das ist ohne Zweifel richtig.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">ohne + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">vor allem</span></td>
+            <td>fremfor alt / særlig</td>
+            <td class="hide-mobile"><span class="td-example">Vor allem mag ich Musik.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">vor + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">zum Beispiel</span></td>
+            <td>for eksempel</td>
+            <td class="hide-mobile"><span class="td-example">Zum Beispiel kann man Rad fahren.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">zu + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">im Moment</span></td>
+            <td>for øyeblikket / akkurat nå</td>
+            <td class="hide-mobile"><span class="td-example">Im Moment bin ich sehr beschäftigt.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">in + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">auf der einen Seite … auf der anderen Seite</span></td>
+            <td>på den ene siden … på den andre siden</td>
+            <td class="hide-mobile"><span class="td-example">Auf der einen Seite ist es günstig, auf der anderen teuer.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">auf + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">unter anderem</span></td>
+            <td>blant annet</td>
+            <td class="hide-mobile"><span class="td-example">Er spricht unter anderem Englisch und Französisch.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">unter + Dat.</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="no-results" id="no-results-fraser">Ingen fraser samsvarer med søket.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       Seksjon 6: Adjektiver med preposisjoner
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section" id="seksjon-adj-wrap">
+    <span class="section-anchor" id="seksjon-adj"></span>
+
+    <div class="ordliste-section-head" style="background:var(--surface2);border-color:var(--border);">
+      <span class="case-chip" style="color:var(--text2);background:var(--surface);border-color:var(--border);">Adj.</span>
+      <h2>Adjektiver med preposisjoner</h2>
+      <span class="sh-count">20 kombinasjoner</span>
+    </div>
+
+    <div class="table-wrap card" style="padding:0;overflow:hidden;margin-bottom:2.5rem;">
+      <table class="data-table" id="adj-table">
+        <thead>
+          <tr>
+            <th>Adjektiv + prep.</th>
+            <th>Norsk</th>
+            <th>Eksempel</th>
+            <th class="hide-mobile">Kasus</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="td-word">stolz auf</span></td>
+            <td>stolt av</td>
+            <td><span class="td-example">Ich bin stolz auf dich.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">auf + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">gut für</span></td>
+            <td>bra for / god for</td>
+            <td><span class="td-example">Das ist gut für die Gesundheit.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">für + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">typisch für</span></td>
+            <td>typisk for</td>
+            <td><span class="td-example">Das ist typisch für ihn.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">für + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">begeistert von</span></td>
+            <td>begeistret av / for</td>
+            <td><span class="td-example">Er ist begeistert von der Idee.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">von + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">abhängig von</span></td>
+            <td>avhengig av</td>
+            <td><span class="td-example">Das ist abhängig von der Situation.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">von + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">zufrieden mit</span></td>
+            <td>fornøyd med</td>
+            <td><span class="td-example">Ich bin zufrieden mit dem Ergebnis.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">mit + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">bekannt mit</span></td>
+            <td>kjent med (en person)</td>
+            <td><span class="td-example">Ich bin mit ihr bekannt.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">mit + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">bekannt für</span></td>
+            <td>kjent for (noe)</td>
+            <td><span class="td-example">Die Stadt ist bekannt für ihre Kirchen.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">für + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">neugierig auf</span></td>
+            <td>nysgjerrig på</td>
+            <td><span class="td-example">Ich bin neugierig auf das Ergebnis.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">auf + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">verliebt in</span></td>
+            <td>forelsket i</td>
+            <td><span class="td-example">Er ist verliebt in sie.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">in + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">interessiert an</span></td>
+            <td>interessert i</td>
+            <td><span class="td-example">Sie ist interessiert an Kunst.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">an + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">nett zu</span></td>
+            <td>snill mot</td>
+            <td><span class="td-example">Er ist sehr nett zu mir.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">zu + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">bereit zu</span></td>
+            <td>klar til / villig til</td>
+            <td><span class="td-example">Ich bin bereit zur Prüfung.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">zu + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">verantwortlich für</span></td>
+            <td>ansvarlig for</td>
+            <td><span class="td-example">Sie ist verantwortlich für das Projekt.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">für + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">froh über</span></td>
+            <td>glad for</td>
+            <td><span class="td-example">Ich bin froh über die Nachricht.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">über + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">enttäuscht von</span></td>
+            <td>skuffet over</td>
+            <td><span class="td-example">Er ist enttäuscht von seinem Ergebnis.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">von + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">wütend auf</span></td>
+            <td>sint på</td>
+            <td><span class="td-example">Sie ist wütend auf ihn.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">auf + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">neidisch auf</span></td>
+            <td>sjalu på / misunnelig på</td>
+            <td><span class="td-example">Er ist neidisch auf seinen Bruder.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">auf + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">arm an</span></td>
+            <td>fattig på / mangel på</td>
+            <td><span class="td-example">Das Essen ist arm an Vitaminen.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">an + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">reich an</span></td>
+            <td>rik på</td>
+            <td><span class="td-example">Diese Region ist reich an Rohstoffen.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">an + Dat.</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="no-results" id="no-results-adj">Ingen adjektiver samsvarer med søket.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       Seksjon 7: Tidsuttrykk med preposisjoner
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section" id="seksjon-tid-wrap">
+    <span class="section-anchor" id="seksjon-tid"></span>
+
+    <div class="ordliste-section-head" style="background:var(--surface2);border-color:var(--border);">
+      <span class="case-chip" style="color:var(--text2);background:var(--surface);border-color:var(--border);">Tid</span>
+      <h2>Tidsuttrykk med preposisjoner</h2>
+      <span class="sh-count">16 uttrykk</span>
+    </div>
+
+    <div class="table-wrap card" style="padding:0;overflow:hidden;margin-bottom:2.5rem;">
+      <table class="data-table" id="tid-table">
+        <thead>
+          <tr>
+            <th>Uttrykk</th>
+            <th>Norsk</th>
+            <th class="hide-mobile">Eksempel</th>
+            <th class="hide-mobile">Prep. + kasus</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="td-word">um 8 Uhr</span></td>
+            <td>klokken 8</td>
+            <td class="hide-mobile"><span class="td-example">Der Zug fährt um 8 Uhr ab.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">um + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">am Montag</span></td>
+            <td>på mandag</td>
+            <td class="hide-mobile"><span class="td-example">Am Montag habe ich frei.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">an + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">am Morgen / Abend</span></td>
+            <td>om morgenen / kvelden</td>
+            <td class="hide-mobile"><span class="td-example">Am Abend lese ich gern.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">an + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">im Januar</span></td>
+            <td>i januar</td>
+            <td class="hide-mobile"><span class="td-example">Im Januar ist es kalt.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">in + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">im Sommer / Winter</span></td>
+            <td>om sommeren / vinteren</td>
+            <td class="hide-mobile"><span class="td-example">Im Sommer fahren wir ans Meer.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">in + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">in zwei Wochen</span></td>
+            <td>om to uker</td>
+            <td class="hide-mobile"><span class="td-example">In zwei Wochen bin ich fertig.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">in + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">seit drei Jahren</span></td>
+            <td>i tre år (pågår ennå)</td>
+            <td class="hide-mobile"><span class="td-example">Ich lerne seit drei Jahren Deutsch.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">seit + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">vor einer Stunde</span></td>
+            <td>for en time siden</td>
+            <td class="hide-mobile"><span class="td-example">Ich habe vor einer Stunde gegessen.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">vor + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">nach dem Unterricht</span></td>
+            <td>etter timen</td>
+            <td class="hide-mobile"><span class="td-example">Nach dem Unterricht gehe ich heim.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">nach + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">bis nächste Woche</span></td>
+            <td>til neste uke</td>
+            <td class="hide-mobile"><span class="td-example">Das muss bis nächste Woche fertig sein.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">bis + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">für zwei Tage</span></td>
+            <td>i to dager (planlagt varighet)</td>
+            <td class="hide-mobile"><span class="td-example">Ich fahre für zwei Tage nach Hamburg.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">für + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">gegen 18 Uhr</span></td>
+            <td>rundt klokken 18</td>
+            <td class="hide-mobile"><span class="td-example">Er kommt gegen 18 Uhr an.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-akk">gegen + Akk.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">ab sofort</span></td>
+            <td>fra nå av / med øyeblikkelig virkning</td>
+            <td class="hide-mobile"><span class="td-example">Ab sofort gilt die neue Regel.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">ab + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">von ... bis ...</span></td>
+            <td>fra ... til ...</td>
+            <td class="hide-mobile"><span class="td-example">Von Montag bis Freitag arbeite ich.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">von + Dat.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">während der Pause</span></td>
+            <td>i løpet av pausen</td>
+            <td class="hide-mobile"><span class="td-example">Während der Pause essen wir.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat" style="background:var(--gen-bg);color:var(--gen);border-color:var(--gen-bd);">Gen.</span></td>
+          </tr>
+          <tr>
+            <td><span class="td-word">kurz vor / nach</span></td>
+            <td>like før / like etter</td>
+            <td class="hide-mobile"><span class="td-example">Kurz vor dem Ziel fiel er hin.</span></td>
+            <td class="hide-mobile"><span class="case-chip chip-dat">vor/nach + Dat.</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="no-results" id="no-results-tid">Ingen uttrykk samsvarer med søket.</div>
+    </div>
+  </div>
+
+  <!-- ── Inline translator ────────────────────────────────────── -->
+  <div class="card" style="padding:1.25rem 1.5rem;margin-top:.5rem;margin-bottom:2rem;">
+    <p style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:.75rem;">Oversett norsk/tysk</p>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-start;">
+      <textarea id="tr-input" style="flex:1 1 240px;min-height:72px;padding:.55rem .85rem;font-size:.9375rem;font-family:inherit;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);outline:none;resize:vertical;" placeholder="Skriv norsk eller tysk tekst&#8230;" oninput="trClear()"></textarea>
+      <div style="display:flex;flex-direction:column;gap:.4rem;padding-top:.1rem;">
+        <button class="btn btn-primary btn-sm" onclick="trTranslate('nb','de')">Norsk &rarr; Tysk</button>
+        <button class="btn btn-secondary btn-sm" onclick="trTranslate('de','nb')">Tysk &rarr; Norsk</button>
+      </div>
+    </div>
+    <div id="tr-result" style="margin-top:.85rem;min-height:1.2rem;font-size:.9375rem;color:var(--text);"></div>
+  </div>
+
+</div>
+
+<!-- ── Toast ────────────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/achievements.js"></script>
+
+<script>
+/* ============================================================
+   ordliste.js — vocabulary reference page
+   ============================================================ */
+
+async function trTranslate(from, to) {
+  const text = document.getElementById("tr-input").value.trim();
+  if (!text) return;
+  const el = document.getElementById("tr-result");
+  el.textContent = "Oversetter...";
+  el.style.color = "var(--text3)";
+  try {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`;
+    const r = await fetch(url);
+    const d = await r.json();
+    const t = d?.responseData?.translatedText;
+    if (t) { el.textContent = t; el.style.color = "var(--text)"; }
+    else { el.textContent = "Ingen oversettelse funnet."; el.style.color = "var(--text3)"; }
+  } catch {
+    el.textContent = "Kunne ikke oversette."; el.style.color = "var(--de-red)";
+  }
+}
+function trClear() { const el = document.getElementById("tr-result"); if (el) el.textContent = ""; }
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderStatsBar();
+  renderContent();
+  if (typeof Achievements !== "undefined") Achievements.checkOrdlisteVisit();
+});
+
+/* ── Stats bar ──────────────────────────────────────────────── */
+function renderStatsBar() {
+  const groups   = Object.values(PREPOSITIONS);
+  const prepTotal = groups.reduce((n, g) => n + g.prepositions.length, 0);
+  const akkCount = PREPOSITIONS.akkusativ.prepositions.length;
+  const datCount = PREPOSITIONS.dativ.prepositions.length;
+  const wexCount = PREPOSITIONS.wechsel.prepositions.length;
+  const verbCount   = 18;
+  const fraserCount = 14;
+  const adjCount    = 20;
+  const tidCount    = 16;
+  const grandTotal  = prepTotal + verbCount + fraserCount + adjCount + tidCount;
+
+  document.getElementById("stats-bar").innerHTML = `
+    <span><strong>${grandTotal}</strong> oppslag totalt</span>
+    <span class="stats-dot"></span>
+    <span><strong>${prepTotal}</strong> preposisjoner</span>
+    <span class="stats-dot"></span>
+    <span><strong>${akkCount}</strong> akkusativ</span>
+    <span class="stats-dot"></span>
+    <span><strong>${datCount}</strong> dativ</span>
+    <span class="stats-dot"></span>
+    <span><strong>${wexCount}</strong> wechsel</span>
+    <span class="stats-dot"></span>
+    <span><strong>${verbCount}</strong> verb</span>
+    <span class="stats-dot"></span>
+    <span><strong>${fraserCount}</strong> fraser</span>
+    <span class="stats-dot"></span>
+    <span><strong>${adjCount}</strong> adjektiver</span>
+    <span class="stats-dot"></span>
+    <span><strong>${tidCount}</strong> tidsuttrykk</span>
+  `;
+}
+
+/* ── Render all three sections ──────────────────────────────── */
+function renderContent() {
+  const container = document.getElementById("ordliste-content");
+  const groups = [
+    { key: "akkusativ", id: "seksjon-akkusativ", chipClass: "chip-akk", headClass: "akk", rowClass: "row-akk", label: "Akkusativ", sublabel: "Alltid akkusativ" },
+    { key: "dativ",     id: "seksjon-dativ",     chipClass: "chip-dat", headClass: "dat", rowClass: "row-dat", label: "Dativ",     sublabel: "Alltid dativ" },
+    { key: "wechsel",   id: "seksjon-wechsel",   chipClass: "chip-wex", headClass: "wex", rowClass: "row-wex", label: "Wechsel",   sublabel: "Akk. (Wohin?) / Dat. (Wo?)" },
+  ];
+
+  container.innerHTML = groups.map(g => buildSection(g)).join("");
+}
+
+function buildSection(g) {
+  const group = PREPOSITIONS[g.key];
+  const count = group.prepositions.length;
+
+  const rows = group.prepositions.map(p => {
+    const example = p.examples && p.examples.length > 0 ? p.examples[0] : "";
+    const note    = p.note || "";
+    return `
+      <tr class="${g.rowClass}" data-de="${p.de.toLowerCase()}" data-no="${p.no.toLowerCase()}">
+        <td>
+          <div class="td-word-wrap">
+            <span class="td-word">${p.de}</span>
+            <button
+              class="copy-btn"
+              title="Kopier ${p.de}"
+              onclick="copyWord(this, '${escAttr(p.de)}')"
+            >kopi&eacute;r</button>
+          </div>
+        </td>
+        <td>${p.no}</td>
+        <td><span class="case-chip ${g.chipClass}">${g.label}</span></td>
+        <td class="hide-mobile">
+          ${example ? `<span class="td-example">${example}</span>` : '<span class="muted">—</span>'}
+        </td>
+        <td class="hide-mobile">
+          ${note ? `<span class="td-note">${note}</span>` : ""}
+        </td>
+      </tr>`;
+  }).join("");
+
+  return `
+    <div class="section" data-section="${g.key}">
+      <span class="section-anchor" id="${g.id}"></span>
+
+      <div class="ordliste-section-head ${g.headClass}">
+        <span class="case-chip ${g.chipClass}">${g.label}</span>
+        <h2>${g.label}preposisjoner</h2>
+        <span class="sh-count">${count} ord</span>
+      </div>
+
+      <div class="table-wrap card" style="padding:0;overflow:hidden;margin-bottom:2.5rem;">
+        <table class="data-table" data-group="${g.key}">
+          <thead>
+            <tr>
+              <th>Preposisjon</th>
+              <th>Norsk</th>
+              <th>Kasus</th>
+              <th class="hide-mobile">Eksempel</th>
+              <th class="hide-mobile">Merknad</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+        <div class="no-results" id="no-results-${g.key}">
+          Ingen preposisjoner samsvarer med s&#248;ket.
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ── Live search filter ─────────────────────────────────────── */
+function filterTables(query) {
+  const q = query.trim().toLowerCase();
+  const groups = ["akkusativ", "dativ", "wechsel"];
+
+  groups.forEach(key => {
+    const table   = document.querySelector(`table[data-group="${key}"]`);
+    const noMsg   = document.getElementById(`no-results-${key}`);
+    if (!table) return;
+
+    const rows    = table.querySelectorAll("tbody tr");
+    let visible   = 0;
+
+    rows.forEach(row => {
+      const de = row.dataset.de || "";
+      const no = row.dataset.no || "";
+      const match = !q || de.includes(q) || no.includes(q);
+      row.style.display = match ? "" : "none";
+      if (match) visible++;
+    });
+
+    noMsg.style.display = (visible === 0) ? "block" : "none";
+  });
+
+  // Filter static sections by full text content
+  ["verb", "fraser", "adj", "tid"].forEach(id => {
+    const table  = document.getElementById(`${id}-table`);
+    const noMsg  = document.getElementById(`no-results-${id}`);
+    if (!table) return;
+    const rows   = table.querySelectorAll("tbody tr");
+    let visible  = 0;
+    rows.forEach(row => {
+      const text  = row.textContent.toLowerCase();
+      const match = !q || text.includes(q);
+      row.style.display = match ? "" : "none";
+      if (match) visible++;
+    });
+    noMsg.style.display = (visible === 0) ? "block" : "none";
+  });
+}
+
+/* ── Copy to clipboard ──────────────────────────────────────── */
+function copyWord(btn, word) {
+  if (!navigator.clipboard) {
+    showToast("Utklippstavle ikke tilgjengelig");
+    return;
+  }
+  navigator.clipboard.writeText(word).then(() => {
+    btn.textContent = "kopiert!";
+    btn.classList.add("copied");
+    showToast("\u201C" + word + "\u201D kopiert");
+    setTimeout(() => {
+      btn.textContent = "kopi\u00E9r";
+      btn.classList.remove("copied");
+    }, 1800);
+  }).catch(() => {
+    showToast("Kunne ikke kopiere");
+  });
+}
+
+/* ── Toast helper ───────────────────────────────────────────── */
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove("show"), 2000);
+}
+
+/* ── Escape attribute values ────────────────────────────────── */
+function escAttr(str) {
+  return str.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+}
+</script>
+</body>
+</html>

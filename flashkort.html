@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flashkort — Tyske Preposisjoner</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Flashcard flip animation ───────────────────────────── */
+    .fc-scene {
+      width: 340px;
+      height: 220px;
+      perspective: 900px;
+      cursor: pointer;
+      margin: 0 auto;
+      user-select: none;
+    }
+
+    .fc-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .fc-scene.flipped .fc-inner {
+      transform: rotateY(180deg);
+    }
+
+    .fc-front,
+    .fc-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      box-shadow: var(--sh);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      box-sizing: border-box;
+    }
+
+    .fc-back {
+      transform: rotateY(180deg);
+    }
+
+    /* ── Front face ─────────────────────────────────────────── */
+    .fc-front-chip {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: auto;
+    }
+
+    .fc-front-word {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      text-align: center;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fc-front-hint {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text3);
+      margin-top: auto;
+    }
+
+    /* ── Back face ──────────────────────────────────────────── */
+    .fc-back-meaning {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin-bottom: 0.65rem;
+      line-height: 1.2;
+    }
+
+    .fc-back-examples {
+      list-style: none;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .fc-back-examples li {
+      font-size: 0.775rem;
+      font-style: italic;
+      color: var(--text2);
+      line-height: 1.45;
+      margin-bottom: 0.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fc-back-note {
+      font-size: 0.72rem;
+      color: var(--text2);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.15rem 0.5rem;
+      display: inline-block;
+      margin-top: 0.5rem;
+      align-self: flex-start;
+    }
+
+    /* ── Filter row ─────────────────────────────────────────── */
+    .fc-filters {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.75rem;
+    }
+
+    /* ── Card stage ─────────────────────────────────────────── */
+    .fc-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    /* ── Navigation row ─────────────────────────────────────── */
+    .fc-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .fc-counter {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--text2);
+      font-variant-numeric: tabular-nums;
+      min-width: 56px;
+      text-align: center;
+    }
+
+    /* ── Known/unknown row ──────────────────────────────────── */
+    .fc-verdict {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-known {
+      background: var(--dat-bg);
+      color: var(--dat);
+      border: 1px solid var(--dat-bd);
+    }
+    .btn-known:hover { background: var(--dat-bd); color: var(--dat); text-decoration: none; }
+
+    .btn-unknown {
+      background: #FEF2F2;
+      color: var(--de-red);
+      border: 1px solid #FECACA;
+    }
+    .btn-unknown:hover { background: #FECACA; color: var(--de-red); text-decoration: none; }
+
+    [data-theme="dark"] .btn-known {
+      background: var(--dat-bg);
+      border-color: var(--dat-bd);
+    }
+    [data-theme="dark"] .btn-unknown {
+      background: #2D0A0A;
+      border-color: #7F1D1D;
+      color: #F87171;
+    }
+
+    /* ── Progress bar ───────────────────────────────────────── */
+    .fc-progress-wrap {
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .fc-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.4rem;
+    }
+
+    .fc-progress-label span:last-child {
+      color: var(--dat);
+    }
+
+    /* ── Empty state ─────────────────────────────────────────── */
+    .fc-empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text2);
+    }
+
+    .fc-empty h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    /* ── Keyboard hint ───────────────────────────────────────── */
+    .fc-kbd-hint {
+      font-size: 0.72rem;
+      color: var(--text3);
+      text-align: center;
+      display: flex;
+      gap: 0.9rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .fc-kbd-hint kbd {
+      display: inline-block;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.05rem 0.35rem;
+      font-size: 0.7rem;
+      font-family: inherit;
+      color: var(--text2);
+    }
+
+    @media (max-width: 400px) {
+      .fc-scene { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div id="page">
+
+  <header class="page-header">
+    <div class="page-header-eyebrow">
+      <span class="flag-bar"><span class="f1"></span><span class="f2"></span><span class="f3"></span></span>
+      <span>Flashkort</span>
+    </div>
+    <h1>Flashkort</h1>
+    <p>Bla gjennom alle preposisjoner. Klikk på kortet for å se oversettelsen.</p>
+  </header>
+
+  <!-- Filter buttons -->
+  <div class="fc-filters" id="fc-filters">
+    <button class="diff-btn active" data-filter="alle">Alle</button>
+    <button class="diff-btn" data-filter="akkusativ">Akkusativ</button>
+    <button class="diff-btn" data-filter="dativ">Dativ</button>
+    <button class="diff-btn" data-filter="wechsel">Wechsel</button>
+  </div>
+
+  <!-- Card stage -->
+  <div class="fc-stage" id="fc-stage">
+
+    <!-- Flip card -->
+    <div class="fc-scene" id="fc-scene" role="button" aria-label="Flashkort — klikk for å snu" tabindex="0">
+      <div class="fc-inner" id="fc-inner">
+
+        <div class="fc-front" id="fc-front">
+          <div class="fc-front-chip">
+            <span class="case-chip" id="fc-chip"></span>
+          </div>
+          <div class="fc-front-word" id="fc-word"></div>
+          <div class="fc-front-hint">Klikk for å se oversettelsen</div>
+        </div>
+
+        <div class="fc-back" id="fc-back">
+          <div class="fc-back-meaning" id="fc-meaning"></div>
+          <ul class="fc-back-examples" id="fc-examples"></ul>
+          <span class="fc-back-note" id="fc-note"></span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fc-nav">
+      <button class="btn btn-secondary btn-sm" id="fc-prev">&#8592; Forrige</button>
+      <span class="fc-counter" id="fc-counter">1 / 24</span>
+      <button class="btn btn-secondary btn-sm" id="fc-next">Neste &#8594;</button>
+    </div>
+
+    <!-- Shuffle -->
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn btn-secondary btn-sm" id="fc-shuffle">&#9674; Bland</button>
+      <button class="btn btn-secondary btn-sm" id="fc-reset-known">Nullstill fremgang</button>
+    </div>
+
+    <!-- Known / Unknown verdict -->
+    <div class="fc-verdict" id="fc-verdict">
+      <button class="btn btn-sm btn-known" id="fc-known">&#10003; Kan dette</button>
+      <button class="btn btn-sm btn-unknown" id="fc-unknown">&#10007; Husker ikke</button>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="fc-progress-wrap">
+      <div class="fc-progress-label">
+        <span>Fremgang</span>
+        <span id="fc-progress-text">0 / 0 kjente</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" id="fc-bar" style="width:0%;background:var(--dat);"></div>
+      </div>
+    </div>
+
+    <!-- Keyboard hint -->
+    <div class="fc-kbd-hint">
+      <span><kbd>&#8592;</kbd><kbd>&#8594;</kbd> Forrige / Neste</span>
+      <span><kbd>Mellomrom</kbd> Snu kortet</span>
+    </div>
+
+  </div><!-- /fc-stage -->
+
+</div><!-- /page -->
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/achievements.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  // ── Build full deck from PREPOSITIONS global ──────────────────
+  function buildDeck(filter) {
+    const groups = ["akkusativ", "dativ", "wechsel"];
+    const deck = [];
+    groups.forEach(function (groupKey) {
+      if (filter !== "alle" && filter !== groupKey) return;
+      const group = PREPOSITIONS[groupKey];
+      group.prepositions.forEach(function (p) {
+        deck.push({
+          de:       p.de,
+          no:       p.no,
+          examples: p.examples,
+          note:     p.note || "",
+          group:    groupKey,
+        });
+      });
+    });
+    return deck;
+  }
+
+  // ── Chip helper ───────────────────────────────────────────────
+  const CHIP_CLASS = { akkusativ: "chip-akk", dativ: "chip-dat", wechsel: "chip-wex" };
+  const CHIP_LABEL = { akkusativ: "Akkusativ",  dativ: "Dativ",  wechsel: "Wechsel" };
+
+  // ── localStorage for known cards ─────────────────────────────
+  const LS_KEY = "flashkort_known";
+
+  function loadKnown() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveKnown(arr) {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(arr)); } catch {}
+  }
+
+  // ── State ─────────────────────────────────────────────────────
+  let deck    = [];
+  let idx     = 0;
+  let isFlipped = false;
+  let known   = loadKnown();   // array of `de` strings
+  let activeFilter = "alle";
+
+  // ── DOM refs ──────────────────────────────────────────────────
+  const scene    = document.getElementById("fc-scene");
+  const chipEl   = document.getElementById("fc-chip");
+  const wordEl   = document.getElementById("fc-word");
+  const meanEl   = document.getElementById("fc-meaning");
+  const exEl     = document.getElementById("fc-examples");
+  const noteEl   = document.getElementById("fc-note");
+  const counterEl= document.getElementById("fc-counter");
+  const prevBtn  = document.getElementById("fc-prev");
+  const nextBtn  = document.getElementById("fc-next");
+  const shuffBtn = document.getElementById("fc-shuffle");
+  const resetBtn = document.getElementById("fc-reset-known");
+  const knownBtn = document.getElementById("fc-known");
+  const unknBtn  = document.getElementById("fc-unknown");
+  const barEl    = document.getElementById("fc-bar");
+  const progTxt  = document.getElementById("fc-progress-text");
+  const filtersEl= document.getElementById("fc-filters");
+
+  // ── Render current card ────────────────────────────────────────
+  function renderCard() {
+    if (deck.length === 0) {
+      wordEl.textContent  = "–";
+      meanEl.textContent  = "";
+      exEl.innerHTML      = "";
+      noteEl.textContent  = "";
+      chipEl.textContent  = "";
+      chipEl.className    = "case-chip";
+      counterEl.textContent = "0 / 0";
+      return;
+    }
+
+    const card = deck[idx];
+
+    // Front
+    chipEl.textContent = CHIP_LABEL[card.group];
+    chipEl.className   = "case-chip " + CHIP_CLASS[card.group];
+    wordEl.textContent = card.de;
+
+    // Back
+    meanEl.textContent = card.no;
+    exEl.innerHTML = (card.examples || []).slice(0, 2).map(function (ex) {
+      return "<li>" + ex + "</li>";
+    }).join("");
+    noteEl.textContent = card.note;
+
+    // Counter
+    counterEl.textContent = (idx + 1) + " / " + deck.length;
+
+    // Known button highlight
+    if (known.includes(card.de)) {
+      knownBtn.style.fontWeight = "800";
+      knownBtn.style.boxShadow  = "0 0 0 2px var(--dat)";
+    } else {
+      knownBtn.style.fontWeight = "";
+      knownBtn.style.boxShadow  = "";
+    }
+
+    updateProgress();
+  }
+
+  // ── Flip ──────────────────────────────────────────────────────
+  function flip() {
+    isFlipped = !isFlipped;
+    scene.classList.toggle("flipped", isFlipped);
+    if (isFlipped && typeof Achievements !== "undefined") {
+      const knownInDeck = deck.filter(function (c) { return known.includes(c.de); }).length;
+      Achievements.recordFlashBrowse(knownInDeck, deck.length);
+    }
+  }
+
+  function unflip() {
+    if (isFlipped) {
+      isFlipped = false;
+      scene.classList.remove("flipped");
+    }
+  }
+
+  // ── Navigate ──────────────────────────────────────────────────
+  function goTo(newIdx) {
+    if (deck.length === 0) return;
+    idx = ((newIdx % deck.length) + deck.length) % deck.length;
+    unflip();
+    renderCard();
+  }
+
+  function goPrev() { goTo(idx - 1); }
+  function goNext() { goTo(idx + 1); }
+
+  // ── Shuffle ───────────────────────────────────────────────────
+  function doShuffle() {
+    deck = shuffle(deck);
+    idx  = 0;
+    unflip();
+    renderCard();
+    showToast("Kortstokken er stokket!");
+  }
+
+  // ── Known / Unknown ───────────────────────────────────────────
+  function markKnown() {
+    if (deck.length === 0) return;
+    const de = deck[idx].de;
+    if (!known.includes(de)) {
+      known.push(de);
+      saveKnown(known);
+    }
+    if (typeof Achievements !== "undefined") {
+      const knownInDeck = deck.filter(function (c) { return known.includes(c.de); }).length;
+      Achievements.recordFlashBrowse(knownInDeck, deck.length);
+    }
+    renderCard();
+    // Auto-advance
+    goNext();
+  }
+
+  function markUnknown() {
+    if (deck.length === 0) return;
+    const de = deck[idx].de;
+    known = known.filter(function (k) { return k !== de; });
+    saveKnown(known);
+    renderCard();
+    goNext();
+  }
+
+  function resetKnown() {
+    if (!confirm("Nullstill all fremgang?")) return;
+    known = [];
+    saveKnown(known);
+    renderCard();
+    showToast("Fremgang nullstilt.");
+  }
+
+  // ── Progress bar ──────────────────────────────────────────────
+  function updateProgress() {
+    if (deck.length === 0) {
+      barEl.style.width   = "0%";
+      progTxt.textContent = "0 / 0 kjente";
+      return;
+    }
+    const knownInDeck = deck.filter(function (c) { return known.includes(c.de); }).length;
+    const pct = Math.round((knownInDeck / deck.length) * 100);
+    barEl.style.width   = pct + "%";
+    progTxt.textContent = knownInDeck + " / " + deck.length + " kjente";
+  }
+
+  // ── Filter ────────────────────────────────────────────────────
+  function applyFilter(filter) {
+    activeFilter = filter;
+    deck = buildDeck(filter);
+    idx  = 0;
+    unflip();
+    renderCard();
+
+    // Update filter button states
+    filtersEl.querySelectorAll(".diff-btn").forEach(function (btn) {
+      btn.classList.toggle("active", btn.dataset.filter === filter);
+    });
+  }
+
+  // ── Events ────────────────────────────────────────────────────
+  scene.addEventListener("click",    flip);
+  scene.addEventListener("keydown",  function (e) {
+    if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); }
+  });
+
+  prevBtn.addEventListener("click",  goPrev);
+  nextBtn.addEventListener("click",  goNext);
+  shuffBtn.addEventListener("click", doShuffle);
+  resetBtn.addEventListener("click", resetKnown);
+  knownBtn.addEventListener("click", markKnown);
+  unknBtn.addEventListener("click",  markUnknown);
+
+  filtersEl.addEventListener("click", function (e) {
+    const btn = e.target.closest(".diff-btn");
+    if (!btn) return;
+    applyFilter(btn.dataset.filter);
+  });
+
+  // Global keyboard shortcuts
+  document.addEventListener("keydown", function (e) {
+    // Ignore if focus is on a button or input
+    const tag = document.activeElement.tagName;
+    if (tag === "BUTTON" || tag === "INPUT" || tag === "TEXTAREA") {
+      // Allow space only on the card scene itself
+      if (!(e.key === " " && document.activeElement === scene)) return;
+    }
+
+    if (e.key === "ArrowLeft")  { e.preventDefault(); goPrev(); }
+    if (e.key === "ArrowRight") { e.preventDefault(); goNext(); }
+    if (e.key === " ")          { e.preventDefault(); flip(); }
+  });
+
+  // ── Boot ──────────────────────────────────────────────────────
+  document.addEventListener("DOMContentLoaded", function () {
+    applyFilter("alle");
+  });
+
+  // In case DOMContentLoaded already fired (scripts at bottom)
+  if (document.readyState !== "loading") {
+    applyFilter("alle");
+  }
+
+})();
+</script>
+</body>
+</html>

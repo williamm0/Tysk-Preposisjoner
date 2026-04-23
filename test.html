@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prøve &ndash; Tyske Preposisjoner</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="page">
+
+  <header class="page-header">
+    <div class="page-header-eyebrow">
+      <span class="flag-bar"><span class="f1"></span><span class="f2"></span><span class="f3"></span></span>
+      <span>Prøvemodus</span>
+    </div>
+    <h1>Simulert prøve</h1>
+    <p>Blandede sp&oslash;rsm&aring;l fra alle kasusgrupper. Du f&aring;r forklaring etter hvert sp&oslash;rsm&aring;l og full fasit p&aring; slutten.</p>
+  </header>
+
+  <!-- Setup -->
+  <div id="test-setup">
+    <div class="test-config">
+
+      <div class="config-row">
+        <span class="config-label">Vanskelighetsgrad</span>
+        <div class="diff-row">
+          <button class="diff-btn active" onclick="setDiff(this,'alle')">Alle</button>
+          <button class="diff-btn" onclick="setDiff(this,'easy')">Lett</button>
+          <button class="diff-btn" onclick="setDiff(this,'medium')">Middels</button>
+          <button class="diff-btn" onclick="setDiff(this,'hard')">Vanskelig</button>
+        </div>
+        <input type="hidden" id="q-diff" value="alle" />
+      </div>
+
+      <div class="config-row">
+        <span class="config-label">Antall sp&oslash;rsm&aring;l</span>
+        <div class="diff-row">
+          <button class="diff-btn active" onclick="setCount(this,10)">10</button>
+          <button class="diff-btn" onclick="setCount(this,15)">15</button>
+          <button class="diff-btn" onclick="setCount(this,20)">20</button>
+          <button class="diff-btn" onclick="setCount(this,25)">25</button>
+          <button class="diff-btn" onclick="setCount(this,30)">30</button>
+        </div>
+        <input type="hidden" id="q-count" value="10" />
+      </div>
+
+      <div class="config-row">
+        <span class="config-label">Tidsbegrensning</span>
+        <label class="toggle-row">
+          <input type="checkbox" id="timer-toggle" />
+          <span style="font-size:.9rem;font-weight:500;">Sl&aring; p&aring; tidtaker</span>
+        </label>
+      </div>
+
+      <div id="timer-options" class="hidden config-row" style="padding:.9rem 1rem;background:var(--surface2);border-radius:var(--r-sm);border:1px solid var(--border);">
+        <span class="config-label">Tid (minutter)</span>
+        <div class="diff-row">
+          <button class="diff-btn active" onclick="setTime(this,5)">5 min</button>
+          <button class="diff-btn" onclick="setTime(this,10)">10 min</button>
+          <button class="diff-btn" onclick="setTime(this,15)">15 min</button>
+          <button class="diff-btn" onclick="setTime(this,20)">20 min</button>
+        </div>
+        <input type="hidden" id="timer-minutes" value="5" />
+      </div>
+
+      <div class="callout" style="margin-bottom:1.5rem;">
+        <strong>Hva testes?</strong>
+        Prøven blander automatisk flervalg, kasus-valg, sant/usant og fyll inn fra alle
+        vanskelighetsgrader. Karakter beregnes (1&ndash;6) basert på andel riktige svar.
+      </div>
+
+      <button class="btn btn-primary btn-lg" id="start-test-btn" style="width:100%;">
+        Start prøven &rarr;
+      </button>
+    </div>
+  </div>
+
+  <!-- Test area -->
+  <div id="test-area" class="hidden"></div>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/achievements.js"></script>
+<script src="js/test.js"></script>
+<script>
+function setDiff(btn, val) {
+  btn.closest(".diff-row").querySelectorAll(".diff-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("q-diff").value = val;
+}
+function setCount(btn, val) {
+  btn.closest(".diff-row").querySelectorAll(".diff-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("q-count").value = val;
+}
+function setTime(btn, val) {
+  btn.closest(".diff-row").querySelectorAll(".diff-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("timer-minutes").value = val;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("timer-toggle").addEventListener("change", function () {
+    document.getElementById("timer-options").classList.toggle("hidden", !this.checked);
+  });
+});
+</script>
+</body>
+</html>

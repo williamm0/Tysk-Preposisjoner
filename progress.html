@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fremgang &ndash; Tyske Preposisjoner</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="page">
+
+  <header class="page-header">
+    <div class="page-header-eyebrow">
+      <span class="flag-bar"><span class="f1"></span><span class="f2"></span><span class="f3"></span></span>
+      <span>Statistikk</span>
+    </div>
+    <h1>Din fremgang</h1>
+    <p>Oversikt over &oslash;vinger, prøveresultater og hva du b&oslash;r jobbe mer med.</p>
+  </header>
+
+  <!-- Stats -->
+  <div class="stat-row">
+    <div class="stat-cell">
+      <div class="stat-n" id="stat-answered">0</div>
+      <div class="stat-l">Sp&oslash;rsm&aring;l besvart</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-n" id="stat-correct">0</div>
+      <div class="stat-l">Riktige svar</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-n" id="stat-accuracy">&ndash;</div>
+      <div class="stat-l">N&oslash;yaktighet</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-n" id="stat-tests">0</div>
+      <div class="stat-l">Pr&oslash;ver tatt</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-n" id="stat-avg">&ndash;</div>
+      <div class="stat-l">Snitt p&aring; pr&oslash;ver</div>
+    </div>
+  </div>
+
+  <!-- Accuracy bar -->
+  <div class="card" style="margin-bottom:1.75rem;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.75rem;">
+      <span style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);">N&oslash;yaktighet totalt</span>
+      <span class="small muted" id="last-activity">&ndash;</span>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill" id="accuracy-bar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Score chart -->
+  <div class="card" style="margin-bottom:1.75rem;">
+    <p style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:1rem;">Pr&oslash;veresultater, siste 10</p>
+    <div id="score-chart" style="display:flex;align-items:flex-end;gap:6px;height:80px;">
+      <p class="small muted" style="align-self:center;">Ingen pr&oslash;ver ennå.</p>
+    </div>
+  </div>
+
+  <!-- Errors -->
+  <div class="card" style="margin-bottom:1.75rem;padding:0;overflow:hidden;">
+    <div style="padding:1.1rem 1.25rem;border-bottom:1px solid var(--border2);">
+      <p style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:.2rem;">Ofte feil p&aring;</p>
+      <p class="small muted">Oppgaver du har svart feil p&aring; flest ganger.</p>
+    </div>
+    <ul class="wrong-list" id="wrong-list">
+      <li style="padding:1.1rem 1.25rem;color:var(--text3);">Ingen data ennå, start en &oslash;ving.</li>
+    </ul>
+  </div>
+
+  <!-- Suggestions -->
+  <div class="card" style="margin-bottom:1.75rem;padding:0;overflow:hidden;">
+    <div style="padding:1.1rem 1.25rem;border-bottom:1px solid var(--border2);">
+      <p style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:.2rem;">Forslag til &oslash;ving</p>
+      <p class="small muted">Basert p&aring; feilene dine.</p>
+    </div>
+    <div id="suggestions" style="padding:1rem 1.25rem;display:flex;flex-direction:column;gap:.6rem;">
+      <p class="small muted">Ingen data ennå.</p>
+    </div>
+  </div>
+
+  <!-- Test history -->
+  <div class="card" style="margin-bottom:1.75rem;padding:0;overflow:hidden;">
+    <div style="padding:1.1rem 1.25rem;border-bottom:1px solid var(--border2);">
+      <p style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);">Pr&oslash;vehistorikk</p>
+    </div>
+    <div id="test-history" style="padding:1rem 1.25rem;">
+      <p class="small muted">Du har ikke tatt noen pr&oslash;ver ennå.</p>
+    </div>
+  </div>
+
+  <!-- Reset -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1.1rem 0;border-top:1px solid var(--border);">
+    <div>
+      <p style="font-weight:600;margin-bottom:.2rem;">Nullstill data</p>
+      <p class="small muted">Sletter all statistikk. Kan ikke angres.</p>
+    </div>
+    <button class="btn btn-secondary" id="reset-btn">Nullstill</button>
+  </div>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/achievements.js"></script>
+<script src="js/progress.js"></script>
+</body>
+</html>
