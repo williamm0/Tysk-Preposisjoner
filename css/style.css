@@ -1778,6 +1778,22 @@ html[data-contrast="high"][data-theme="dark"] { --text2: #BABABF; --text3: #9090
   100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
 }
 
+.odin-pop {
+  position: fixed;
+  z-index: 9998;
+  pointer-events: none;
+  height: auto;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.28));
+  animation: odin-pop 2.2s cubic-bezier(.2,.9,.22,1) forwards;
+}
+
+@keyframes odin-pop {
+  0%   { opacity: 0; transform: translate(-50%,-50%) rotate(-12deg) scale(.25); }
+  12%  { opacity: 1; transform: translate(-50%,-50%) rotate(8deg) scale(1); }
+  78%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%,-70%) rotate(18deg) scale(1.15); }
+}
+
 /* ── Inline article table (for article exercises) ────────────── */
 
 .art-ref-inline {

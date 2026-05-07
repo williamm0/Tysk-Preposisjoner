@@ -193,6 +193,26 @@ function launchConfetti() {
   }
 }
 
+function launchOdinPop() {
+  for (let i = 0; i < 24; i++) {
+    const img = document.createElement("img");
+    const size = 180 + Math.random() * 180;
+    img.src = "image-odin.png";
+    img.alt = "";
+    img.className = "odin-pop";
+    img.style.cssText = `
+      left:${Math.random() * 100}vw;
+      top:${Math.random() * 100}vh;
+      width:${size}px;
+      animation-duration:${1.6 + Math.random() * 1.5}s;
+      animation-delay:${Math.random() * 0.25}s;
+      transform:translate(-50%,-50%) rotate(${Math.random() * 60 - 30}deg) scale(.55);
+    `;
+    document.body.appendChild(img);
+    img.addEventListener("animationend", () => img.remove());
+  }
+}
+
 function injectStickyNote() {
   const saved = LS.get("stickyNote")      || "";
   const isMin = LS.get("stickyMinimized") || false;
@@ -276,6 +296,7 @@ function injectStickyNote() {
     const val = body.value;
     LS.set("stickyNote", val);
     if (countWord(val, "confetti") > countWord(prevVal, "confetti")) launchConfetti();
+    if (countWord(val, "odin") > countWord(prevVal, "odin")) launchOdinPop();
     prevVal = val;
   });
 
