@@ -173,6 +173,3 @@ js/                 Data, logikk, lyd, innstillinger og prestasjoner
 
 Målet med nettsiden er å gjøre tyske preposisjoner lettere å lære. I stedet for bare å pugge lister får du forklaringer, eksempler, oppgaver, spill og fremgangssporing på samme sted.
 
-## Lisens
-
-Legg til lisens her hvis prosjektet skal publiseres med en bestemt lisens.
