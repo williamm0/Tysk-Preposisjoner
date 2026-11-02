@@ -60,6 +60,12 @@ Ordlisten gir en samlet oversikt over preposisjonene med norsk betydning, kasus 
 
 Siden har et prestasjonssystem med 27 prestasjoner som kan låses opp ved å øve, spille og bruke nettsiden.
 
+### Øvingsark
+
+`proveark.html` er et ark med preposisjoner, kasus, artikler og korte former. Du kan løse det i nettleseren, med retting, eller skrive det ut.
+
+`GLOSEPROVE_5_NOV.md` er en tom mal til gloseprøven torsdag 5. november 2026 (Isabel Wenner, Teams Tysk General). Lim inn substantiv med artikkel, verb og adjektiv fra Teams der.
+
 ## Kasusgruppene
 
 ### Akkusativ
@@ -156,17 +162,19 @@ På Windows kan du åpne `index.html` direkte fra filutforskeren.
 ## Filstruktur
 
 ```text
-index.html          Forside
-learn.html          Teori og forklaringer
-practice.html       Øvingsoppgaver
-test.html           Prøvemodus
-progress.html       Statistikk og fremgang
-game.html           Spill
-flashkort.html      Flashkort
-ordliste.html       Ordliste
-achievements.html   Prestasjoner
-css/                Stilark
-js/                 Data, logikk, lyd, innstillinger og prestasjoner
+index.html             Forside
+learn.html             Teori og forklaringer
+practice.html          Øvingsoppgaver
+test.html              Prøvemodus
+progress.html          Statistikk og fremgang
+game.html              Spill
+flashkort.html         Flashkort
+ordliste.html          Ordliste
+achievements.html      Prestasjoner
+proveark.html          Øvingsark for preposisjoner og kasus
+GLOSEPROVE_5_NOV.md    Tom mal til gloseprøven 5. november
+css/                   Stilark
+js/                    Data, logikk, lyd, innstillinger og prestasjoner
 ```
 
 ## Mål

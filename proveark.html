@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Øvingsark – tyske preposisjoner</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* The shared note sits over the answer lines on this sheet. */
+    #sticky-note { display: none; }
+
+    .sheet-note {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .sheet-note p + p { margin-top: 0.35rem; }
+
+    details.huskelapp {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 0.9rem 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+    details.huskelapp summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .huskelapp-body { margin-top: 0.9rem; }
+    .mini-list { margin: 0.35rem 0 0.8rem 1.1rem; }
+    .mini-list li { margin: 0.15rem 0; }
+
+    .quiz {
+      list-style: none;
+      counter-reset: q;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .quiz li {
+      counter-increment: q;
+      display: grid;
+      grid-template-columns: 1.75rem 1fr;
+      gap: 0.45rem;
+      align-items: baseline;
+    }
+    .quiz li::before {
+      content: counter(q);
+      font-weight: 700;
+      color: var(--text3);
+      font-size: 0.8rem;
+    }
+    .q-hint {
+      color: var(--text3);
+      font-size: 0.8rem;
+      margin-left: 0.35rem;
+    }
+    .sheet-input {
+      font: inherit;
+      color: inherit;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.2rem 0.45rem;
+      min-width: 8.5rem;
+    }
+    .sheet-input.short {
+      min-width: 4.25rem;
+      width: 5rem;
+      text-align: center;
+    }
+    .sheet-input.wide {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      margin-top: 0.35rem;
+    }
+    .sheet-input.ok {
+      border-color: var(--dat);
+      background: var(--dat-bg);
+    }
+    .sheet-input.bad {
+      border-color: var(--de-red);
+      background: color-mix(in srgb, var(--de-red) 12%, var(--surface));
+    }
+    .quiz-block { margin-bottom: 1.25rem; }
+    .quiz-block h2 { font-size: 1.05rem; margin-bottom: 0.35rem; }
+    .quiz-block .lead { margin-bottom: 0.9rem; }
+
+    #score[data-state="ready"] { font-weight: 700; }
+
+    #fasit ol { margin-left: 1.2rem; }
+    #fasit li { margin: 0.2rem 0; }
+      #fasit h3 { font-size: 0.95rem; margin: 1rem 0 0.35rem; }
+
+    @media print {
+      #nav, #sticky-note, #qr-btn, #qr-panel, .no-print { display: none !important; }
+      :root {
+        --bg: #fff;
+        --surface: #fff;
+        --surface2: #fff;
+        --text: #111;
+        --text2: #333;
+        --text3: #444;
+        --border: #ccc;
+        --border2: #ddd;
+        --dat-bg: #fff;
+        --akk-bg: #fff;
+        --wex-bg: #fff;
+      }
+      html, body { background: #fff !important; color: #111 !important; }
+      #page { padding: 0 !important; max-width: none; }
+      #fasit { display: none !important; }
+      body.print-fasit #fasit { display: block !important; break-before: page; }
+      .card, .sheet-note, details.huskelapp, .quiz-block {
+        break-inside: avoid;
+        box-shadow: none !important;
+      }
+      .sheet-input, .sheet-input.ok, .sheet-input.bad {
+        border: none;
+        border-bottom: 1px solid #111;
+        border-radius: 0;
+        background: transparent !important;
+        color: #111 !important;
+      }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+<div id="page">
+
+  <header class="page-header">
+    <div class="page-header-eyebrow">
+      <span class="flag-bar"><span class="f1"></span><span class="f2"></span><span class="f3"></span></span>
+      <span>Øvingsark · kasus</span>
+    </div>
+    <h1>Preposisjoner og kasus</h1>
+    <p>Ark til å løse på skjerm eller papir. Gloseprøven torsdag 5. november 2026 (Isabel Wenner, Teams Tysk General) er substantiv, verb og adjektiv. Den lista limer du inn i <a href="GLOSEPROVE_5_NOV.md">GLOSEPROVE_5_NOV.md</a>.</p>
+  </header>
+
+  <div class="sheet-note">
+    <p>Skriv svaret i feltet. Tomme felt blir ikke merket feil, så du kan sjekke én del om gangen.</p>
+    <p class="muted">På gruppe-oppgavene holder det med <strong>A</strong> (akkusativ), <strong>D</strong> (dativ) eller <strong>W</strong> (Wechsel, begge kasus).</p>
+  </div>
+
+  <details class="huskelapp">
+    <summary>Huskelapp, åpne bare hvis du står fast</summary>
+    <div class="huskelapp-body">
+      <p><span class="case-chip chip-akk">Akkusativ</span> durch · für · gegen · ohne · um</p>
+      <p class="muted">Alltid akkusativ. Av artiklene er det bare maskulin som endrer seg: der → den.</p>
+      <p style="margin-top:0.8rem;"><span class="case-chip chip-dat">Dativ</span> aus · bei · mit · nach · seit · von · zu · außer · gegenüber · ab</p>
+      <p class="muted">Alltid dativ. der → dem, die → der, das → dem, die (flertall) → den.</p>
+      <p style="margin-top:0.8rem;"><span class="case-chip chip-wex">Wechsel</span> an · auf · hinter · in · neben · über · unter · vor · zwischen</p>
+      <p class="muted">Wohin? (hvor hen, bevegelse) → akkusativ. Wo? (hvor, stedet ting er) → dativ.</p>
+      <p style="margin-top:0.8rem;"><strong>Korte former:</strong> zum (zu+dem) · zur (zu+der) · im (in+dem) · ins (in+das) · am (an+dem) · ans (an+das) · vom (von+dem) · beim (bei+dem)</p>
+    </div>
+  </details>
+
+  <div class="btn-row no-print" style="margin-bottom:1.5rem;">
+    <button type="button" class="btn btn-primary" id="check-btn">Sjekk svar</button>
+    <button type="button" class="btn btn-secondary" id="reset-btn">Tøm merking</button>
+    <button type="button" class="btn btn-secondary" id="key-btn">Vis fasit</button>
+    <button type="button" class="btn btn-secondary" id="print-btn">Skriv ut</button>
+    <button type="button" class="btn btn-secondary" id="print-key-btn">Skriv ut med fasit</button>
+  </div>
+  <p id="score" class="muted no-print" style="margin-bottom:1.5rem;" aria-live="polite"></p>
+
+  <section class="card quiz-block">
+    <h2>A. Hvilken gruppe?</h2>
+    <p class="lead muted">Skriv A, D eller W.</p>
+    <ol class="quiz">
+      <li><span>durch <input name="svar" class="sheet-input short" data-accept="a|akk|akkusativ" aria-label="Kasusgruppe for durch"></span></li>
+      <li><span>für <input name="svar" class="sheet-input short" data-accept="a|akk|akkusativ" aria-label="Kasusgruppe for für"></span></li>
+      <li><span>um <input name="svar" class="sheet-input short" data-accept="a|akk|akkusativ" aria-label="Kasusgruppe for um"></span></li>
+      <li><span>aus <input name="svar" class="sheet-input short" data-accept="d|dat|dativ" aria-label="Kasusgruppe for aus"></span></li>
+      <li><span>mit <input name="svar" class="sheet-input short" data-accept="d|dat|dativ" aria-label="Kasusgruppe for mit"></span></li>
+      <li><span>außer <input name="svar" class="sheet-input short" data-accept="d|dat|dativ" aria-label="Kasusgruppe for außer"></span></li>
+      <li><span>auf <input name="svar" class="sheet-input short" data-accept="w|wechsel|wechselpräposition|wechselpraeposition|begge|akk dat|akkusativ dativ|akkusativ eller dativ" aria-label="Kasusgruppe for auf"></span></li>
+      <li><span>in <input name="svar" class="sheet-input short" data-accept="w|wechsel|wechselpräposition|wechselpraeposition|begge|akk dat|akkusativ dativ|akkusativ eller dativ" aria-label="Kasusgruppe for in"></span></li>
+      <li><span>zwischen <input name="svar" class="sheet-input short" data-accept="w|wechsel|wechselpräposition|wechselpraeposition|begge|akk dat|akkusativ dativ|akkusativ eller dativ" aria-label="Kasusgruppe for zwischen"></span></li>
+    </ol>
+  </section>
+
+  <section class="card quiz-block">
+    <h2>B. Fyll inn preposisjonen</h2>
+    <p class="lead muted">Norsk betydning står i grått.</p>
+    <ol class="quiz">
+      <li><span>Ich gehe <input name="svar" class="sheet-input" data-accept="durch" aria-label="Preposisjon, gjennom parken"> den Park. <span class="q-hint">gjennom</span></span></li>
+      <li><span>Das Geschenk ist <input name="svar" class="sheet-input" data-accept="für|fuer|fur" aria-label="Preposisjon, for deg"> dich. <span class="q-hint">for</span></span></li>
+      <li><span>Er kommt <input name="svar" class="sheet-input" data-accept="aus" aria-label="Preposisjon, fra Tyskland"> Deutschland. <span class="q-hint">fra et land</span></span></li>
+      <li><span>Ich fahre <input name="svar" class="sheet-input" data-accept="mit" aria-label="Preposisjon, med bussen"> dem Bus. <span class="q-hint">med</span></span></li>
+      <li><span>Sie wohnt <input name="svar" class="sheet-input" data-accept="bei" aria-label="Preposisjon, hos bestemoren"> ihrer Oma. <span class="q-hint">hos</span></span></li>
+      <li><span>Wir gehen <input name="svar" class="sheet-input" data-accept="um" aria-label="Preposisjon, rundt innsjøen"> den See. <span class="q-hint">rundt</span></span></li>
+    </ol>
+  </section>
+
+  <section class="card quiz-block">
+    <h2>C. Riktig artikkel</h2>
+    <p class="lead muted">Kjønn står i grått. Spør deg: Wohin (bevegelse) eller Wo (sted)?</p>
+    <ol class="quiz">
+      <li><span>Ich gehe in <input name="svar" class="sheet-input short" data-accept="die" aria-label="Artikkel, går inn på skolen"> Schule. <span class="q-hint">die Schule, bevegelse</span></span></li>
+      <li><span>Ich bin in <input name="svar" class="sheet-input short" data-accept="der" aria-label="Artikkel, er på skolen"> Schule. <span class="q-hint">die Schule, sted</span></span></li>
+      <li><span>Das Buch liegt auf <input name="svar" class="sheet-input short" data-accept="dem" aria-label="Artikkel, boken ligger"> Tisch. <span class="q-hint">der Tisch, sted</span></span></li>
+      <li><span>Ich lege das Buch auf <input name="svar" class="sheet-input short" data-accept="den" aria-label="Artikkel, jeg legger boken"> Tisch. <span class="q-hint">der Tisch, bevegelse</span></span></li>
+      <li><span>Die Katze kriecht unter <input name="svar" class="sheet-input short" data-accept="das" aria-label="Artikkel, katten kryper"> Bett. <span class="q-hint">das Bett, bevegelse</span></span></li>
+      <li><span>Ich komme mit <input name="svar" class="sheet-input short" data-accept="den" aria-label="Artikkel, med vennene"> Freunden. <span class="q-hint">die Freunde, flertall</span></span></li>
+    </ol>
+  </section>
+
+  <section class="card quiz-block">
+    <h2>D. Korte former</h2>
+    <p class="lead muted">Skriv ordet slik det brukes i setningen: zu + dem blir ett ord.</p>
+    <ol class="quiz">
+      <li><span>zu + dem = <input name="svar" class="sheet-input short" data-accept="zum" aria-label="Kort form av zu dem"></span></li>
+      <li><span>in + das = <input name="svar" class="sheet-input short" data-accept="ins" aria-label="Kort form av in das"></span></li>
+      <li><span>Ich fahre <input name="svar" class="sheet-input short" data-accept="zum" aria-label="Kort form, til stasjonen"> Bahnhof. <span class="q-hint">zu + dem</span></span></li>
+      <li><span>Wir gehen <input name="svar" class="sheet-input short" data-accept="ins" aria-label="Kort form, inn i kinoen"> Kino. <span class="q-hint">in + das</span></span></li>
+    </ol>
+  </section>
+
+  <section class="card quiz-block">
+    <h2>E. Oversett</h2>
+    <p class="lead muted">En kort tysk setning er nok. Sjekken ser etter preposisjon og artikkel.</p>
+    <ol class="quiz">
+      <li>
+        <span>Jeg går gjennom parken.
+          <input name="svar" class="sheet-input wide" data-contains="durch den park" aria-label="Oversettelse, gjennom parken">
+        </span>
+      </li>
+      <li>
+        <span>Jeg kjører med bussen.
+          <input name="svar" class="sheet-input wide" data-contains="mit dem bus" aria-label="Oversettelse, med bussen">
+        </span>
+      </li>
+      <li>
+        <span>Jeg er på skolen. <span class="q-hint">du er der</span>
+          <input name="svar" class="sheet-input wide" data-contains="in der schule" aria-label="Oversettelse, er på skolen">
+        </span>
+      </li>
+    </ol>
+  </section>
+
+  <section id="fasit" class="card hidden">
+    <h2>Fasit</h2>
+    <h3>A. Gruppe</h3>
+    <ol>
+      <li>durch, A. Alltid akkusativ.</li>
+      <li>für, A. Alltid akkusativ.</li>
+      <li>um, A. Alltid akkusativ.</li>
+      <li>aus, D. Alltid dativ.</li>
+      <li>mit, D. Alltid dativ.</li>
+      <li>außer, D. Alltid dativ, også når det betyr «unntatt».</li>
+      <li>auf, W. Akkusativ ved bevegelse, dativ når noe er på stedet.</li>
+      <li>in, W. Samme regel som auf.</li>
+      <li>zwischen, W. Samme regel som auf.</li>
+    </ol>
+    <h3>B. Preposisjon</h3>
+    <ol>
+      <li>durch</li>
+      <li>für</li>
+      <li>aus</li>
+      <li>mit</li>
+      <li>bei</li>
+      <li>um</li>
+    </ol>
+    <h3>C. Artikkel</h3>
+    <ol>
+      <li>die. Bevegelse inn, akkusativ, die blir stående.</li>
+      <li>der. Sted, dativ, die → der.</li>
+      <li>dem. Sted, dativ, der → dem.</li>
+      <li>den. Bevegelse, akkusativ, der → den.</li>
+      <li>das. Bevegelse, akkusativ, das blir stående.</li>
+      <li>den. mit tar dativ, flertall die → den. Ich komme mit den Freunden.</li>
+    </ol>
+    <h3>D. Korte former</h3>
+    <ol>
+      <li>zum</li>
+      <li>ins</li>
+      <li>zum. Ich fahre zum Bahnhof.</li>
+      <li>ins. Wir gehen ins Kino.</li>
+    </ol>
+    <h3>E. Oversettelse</h3>
+    <ol>
+      <li>Ich gehe durch den Park.</li>
+      <li>Ich fahre mit dem Bus.</li>
+      <li>Ich bin in der Schule. «På skolen» er in, ikke auf, når du er der.</li>
+    </ol>
+  </section>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/achievements.js"></script>
+<script>
+function foldAnswer(value) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/ß/g, "ss")
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function acceptedValues(raw) {
+  return raw.split("|").map(foldAnswer).filter(Boolean);
+}
+
+function fieldIsCorrect(input) {
+  const value = foldAnswer(input.value);
+  if (!value) return null;
+  if (input.dataset.accept) {
+    return acceptedValues(input.dataset.accept).includes(value);
+  }
+  const hay = value.split(" ").filter(Boolean);
+  return acceptedValues(input.dataset.contains).some(function (needle) {
+    const words = needle.split(" ").filter(Boolean);
+    let start = 0;
+    for (let i = 0; i < words.length; i++) {
+      const at = hay.indexOf(words[i], start);
+      if (at === -1) return false;
+      start = at + 1;
+    }
+    return true;
+  });
+}
+
+function checkSheet() {
+  const fields = document.querySelectorAll("[data-accept], [data-contains]");
+  let correct = 0;
+  let wrong = 0;
+  let empty = 0;
+  fields.forEach(function (input) {
+    const result = fieldIsCorrect(input);
+    input.classList.remove("ok", "bad");
+    if (result === null) {
+      empty += 1;
+    } else if (result) {
+      correct += 1;
+      input.classList.add("ok");
+    } else {
+      wrong += 1;
+      input.classList.add("bad");
+    }
+  });
+  const score = document.getElementById("score");
+  score.dataset.state = "ready";
+  score.textContent = correct + " av " + fields.length + " er rett. " + wrong + " er feil. " + empty + " er tomme.";
+}
+
+function clearMarks() {
+  document.querySelectorAll(".sheet-input").forEach(function (input) {
+    input.classList.remove("ok", "bad");
+  });
+  const score = document.getElementById("score");
+  score.dataset.state = "";
+  score.textContent = "";
+}
+
+function printSheet(withKey) {
+  const fasit = document.getElementById("fasit");
+  const wasHidden = fasit.classList.contains("hidden");
+  if (withKey) fasit.classList.remove("hidden");
+  document.body.classList.toggle("print-fasit", !!withKey);
+  window.print();
+  document.body.classList.remove("print-fasit");
+  if (withKey && wasHidden) fasit.classList.add("hidden");
+}
+
+document.getElementById("check-btn").addEventListener("click", checkSheet);
+document.getElementById("reset-btn").addEventListener("click", clearMarks);
+document.getElementById("key-btn").addEventListener("click", function () {
+  const fasit = document.getElementById("fasit");
+  const hidden = fasit.classList.toggle("hidden");
+  this.textContent = hidden ? "Vis fasit" : "Skjul fasit";
+});
+document.getElementById("print-btn").addEventListener("click", function () { printSheet(false); });
+document.getElementById("print-key-btn").addEventListener("click", function () { printSheet(true); });
+</script>
+</body>
+</html>
